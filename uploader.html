@@ -9,22 +9,23 @@
 <body>
 
     <div id="app">
-            <uk-upload :token-url="['111','222']"></uk-upload>
+            <uk-upload :token-url="['111','222']" list-type="card"></uk-upload>
     </div>
 
 
 
 
 
-
+<!-- uk-upload -->
     <div id="template" style="display:none">
         <div class="uoko-upload-box">
             <div>
                 <input v-if="multiple" multiple="multiple" ref='file' type="file" style="display:none;" @change="onFileChange">
                 <input v-else ref='file' type="file" style="display:none;" @change="onFileChange">
-                <button @click="openFileBrowser">上传文件</button>
+                <button @click="openFileBrowser" v-if="!previewMode && listType !== 'card'">上传文件</button>
             </div>
-                <div class="uoko-upload-item" v-if="!previewMode" v-show="enableUpload">
+                <uk-file-list :file-list="fileList"></uk-file-list>
+                <div class="uoko-upload-item" v-if="!previewMode && listType === 'card'" v-show="enableUpload">
                     <div class="uoko-upload-item-wrap">
                         <div class="uoko-upload-item-content uoko-upload-add-btn"  @click="openFileBrowser">
                             <div class="uoko-upload-full uoko-upload-add-btn">
@@ -35,40 +36,36 @@
                 </div>
         </div>
     </div>
+    <!-- uk-upload end -->
 
 
-
-
-
-
-    <!-- <div class="uoko-upload-box"> -->
-        <div class="uoko-upload-item" v-for="img in value">
+    <!-- uk-file-list -->
+    <div style="display:none" id="filelist">
+        <div class="uoko-upload-item" v-for="file in fileList">
             <div class="uoko-upload-item-wrap">
                 <div class="uoko-upload-item-content">
-                    <span class="uoko-upload-item-remove" @click="removePic(img.id)" v-if="!previewMode">×</span>
+                    <span class="uoko-upload-item-remove" @click="handleRemoveFile(file)" v-if="!readOnly">×</span>
                     <div class="uoko-upload-full uoko-upload-img-wrap">
-                        <img :src="img.thumbSrc" v-if="isSupportView || img.status==='success'" @click="showBigPic(img)" class="uoko-upload-img"
+                        <img :src="img.thumbSrc" v-if="supportView || file.status==='success'" @click="openPreviewDialog(file)" class="uoko-upload-img"
                         />
                     </div>
-                    <div class="uoko-upload-mask" v-show="img.status!=='success'">
-                        <div class="uoko-upload-progress" v-show="img.status =='pending'">
-                            <span class="uoko-upload-progress-bar">{{img.progress}}%</span>
+                    <div class="uoko-upload-mask" v-show="file.status!=='success'">
+                        <div class="uoko-upload-progress" v-show="file.status =='pending'">
+                            <span class="uoko-upload-progress-bar">{{file.progress}}%</span>
                         </div>
-                        <span class="uoko-upload-error" v-if="img.status==='fail'">!</span>
+                        <span class="uoko-upload-error" v-if="file.status==='error'">!</span>
                     </div>
-                    <div v-if="showFileName" class="uoko-upload-file-name" :title="img.name">{{img.name}}</div>
+                    <div v-if="showFileName" class="uoko-upload-file-name" :title="file.name">{{file.name}}</div>
                 </div>
             </div>
         </div>
-        <!-- <div class="uoko-upload-item" v-if="!previewMode" v-show="!isOverMaxNumber && enableUpload">
-            <div class="uoko-upload-item-wrap">
-                <div class="uoko-upload-item-content uoko-upload-add-btn">
-                    <div class="uoko-upload-full uoko-upload-add-btn" ref="uokouploadbtn">
-                        <span class="uoko-upload-add-icon">+</span>
-                    </div>
-                </div>
-            </div>
-        </div> -->
+    </div>
+    <!-- uk-file-list -->
+   
+
+
+     <!-- uk-previewer -->
+     <div style="display:none;" id="previewer">
         <div class="uoko-upload-preview-dialog" v-show="showPreviewDialog">
             <div class="uoko-upload-preview-wrapper">
                 <div class="uoko-upload-imgwrapper" v-show="imageStatus === 'success'" :style="{transform:transform}" ref="picbox" @mousedown="mousedown($event)"
@@ -116,7 +113,8 @@
                 </div>
             </div>
         </div>
-    <!-- </div> -->
+    </div>
+    <!-- uk-previewer end -->
 
 
 
@@ -127,11 +125,13 @@
         <link rel="stylesheet" href="uoko-upload.css">
         <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
         <script src="uploader.js"></script>
+        <script src="uk-file-list.js"></script>
+        <script src="uk-previewer.js"></script>
         <script src="uk-upload.js"></script>
 
     <script>
 
-
+      
 
 
 

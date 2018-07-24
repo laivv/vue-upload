@@ -43,6 +43,10 @@
                showFileList:{
                    type:Boolean,
                    default:true
+               },
+               listType:{
+                   type:String,
+                   default:'card' //card or text
                }
                
             },
