@@ -229,8 +229,10 @@
                     this.$refs.file.click();
                 },
                 openPreviewDialog:function(file){
-                    this.index = this.fileList.indexOf(file);
-                    this.showPreviewDialog =true;
+                    if(file.status === 'success'){
+                        this.index = this.fileList.indexOf(file);
+                        this.showPreviewDialog = true;
+                    }
                 },
                 handleRemoveFile:function(file){
                     var isRemove = true;
@@ -262,6 +264,11 @@
                        res = false;
                     }
                     return res;
+                },
+                reload:function(file){
+                    file.status = 'waiting';
+                    file.progress = 0;
+                    this.upload(file);
                 },
                 upload:function(file){
                     var _self = this;

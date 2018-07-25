@@ -24,7 +24,7 @@
             <uk-upload 
             v-model="fileList" 
             :token-url="['111','222']" 
-            list-type="text" 
+            list-type="card" 
             :enable-upload="false"
             :show-file-name="true"
             :preview-mode="false"
@@ -74,16 +74,22 @@
                 </div>
             </template>
             <ul v-else>
-                <li class="uk-upload-list-item" v-for="file in fileList" @click="openPreviewDialog(file)">
+                <li class="uk-upload-list-item" v-for="file in fileList">
                     <div class="uk-upload-list-name uk-upload-clearfix">
-                        <span>{{file.name}}</span>
-                        <span class="uk-upload-right" v-if="!previewMode">
-                            <span v-if="file.status ==='pending'">{{file.progress}}%</span>
-                            <span v-if="file.status === 'error'" class="uk-upload-list-error">!</span>
+                        <span class="uk-upload-list-title" :class="{'uk-upload-list-error':file.status === 'error'}" @click="openPreviewDialog(file)">{{file.name}}</span>
+                        <span class="uk-upload-list-icons uk-upload-right" v-if="!previewMode">
+                            <span class="uk-upload-list-tip" v-if="file.status === 'pending'">{{file.progress}}%</span>
+                            <template v-if="file.status === 'error'">
+                                <span class="uk-upload-list-retry" title="重试" @click="reload(file)"><i class="iconfont icon-retry"></i></span>
+                                <span class="uk-upload-list-tip uk-upload-list-error"><i class="iconfont icon-iconsb"></i></span>
+                            </template>
+                            <span class="uk-upload-list-tip" v-if="file.status === 'success'"><i class="iconfont icon-icon-check-solid"></i></span>
+                            <span v-if="file.status === 'waiting'" class="uk-upload-list-tip uk-upload-list-wait"><i class="iconfont icon-waiting"></i></span>
+                            <span class="uk-upload-list-remove" @click="handleRemoveFile(file)" title="删除">×</span>
                         </span>
                     </div>
-                    <div class="uk-upload-list-progress">
-                        <div class="uk-upload-list-progress-bar" :style="{width:file.progress + '%'}"></div>
+                    <div class="uk-upload-list-progress" v-if="file.status === 'pending'">
+                        <div class="uk-upload-list-progress-bar" :class="{'uk-upload-error-bar':file.status === 'error'}" :style="{width:file.progress + '%'}"></div>
                     </div>
                     
                 </li>
@@ -175,8 +181,9 @@
             data:function(){
                 return{
                     fileList:[{src:'http://ooydngjcf.bkt.clouddn.com/Contract.E00EFDA4.png',status:'error'},
-                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.8036359D.png'},
-                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.3A54B8D2.png'}]
+                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.8036359D.png',status:'success'},
+                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.8036359D.png',status:'pending'},
+                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.3A54B8D2.png',status:'waiting'}]
                 }
             },
             methods:{

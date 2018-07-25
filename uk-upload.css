@@ -78,9 +78,8 @@
 .uk-upload-progress-bar {
     text-align: center;
     color: #fff;
-    line-height: 30px;
+    line-height: 40px;
 }
-.uk-upload-list-error,
 .uk-upload-error {
     width: 20px;
     height: 20px;
@@ -160,9 +159,14 @@
     padding: 5px 0;
 }
 .uk-upload-list-item{
-    cursor: pointer;
     color: #24cbc1;
     padding: 5px 0;
+}
+.uk-upload-list-title{
+    cursor: pointer;
+}
+.uk-upload-list-icons>span{
+   vertical-align: middle;
 }
 .uk-upload-list-progress{
     width:100%;
@@ -174,4 +178,35 @@
 .uk-upload-list-progress-bar{
     height: 100%;
     background-color:#24cbc1;
+}
+.uk-upload-error-bar{
+    background: red;
+}
+.uk-upload-list-error{
+    color:red;
+}
+.uk-upload-list-wait .iconfont{
+    color:#aaa;
+}
+.uk-upload-list-retry{
+    display: none;
+    cursor: pointer;
+}
+.uk-upload-list-retry .iconfont{
+    font-size: 14px;
+}
+.uk-upload-list-remove{
+    display: none;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: monospace,serif;
+    font-weight: bold;
+    color:#888;
+}
+.uk-upload-list-item:hover .uk-upload-list-retry,
+.uk-upload-list-item:hover .uk-upload-list-remove{
+    display: inline;
+}
+.uk-upload-list-item:hover .uk-upload-list-tip{
+    display: none;
 }
