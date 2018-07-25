@@ -8,10 +8,15 @@ Vue.component('uk-previewer', {
         visible: {
             type: Boolean,
             default: false
+        },
+        index:{
+            type:Boolean,
+            default:0
         }
     },
     data: function () {
         return {
+            _index:0,
             fileSrc:'',
             fileId: '',
             fileState: {},
@@ -25,19 +30,21 @@ Vue.component('uk-previewer', {
         }
     },
     mounted: function () {
+        this.createFileState();
         this.init();
+        this.setCurrent();
     },
     methods: {
         createFileState: function () {
             this.fileList.forEach(function (file) {
                 if (this.fileState[file.id] === undefined) {
-                    this.fileState[file.id] = {
+                    this.$set(this.fileState,file.id,{
                         rotate: 0,
                         scale: 1,
                         x: '50%',
                         y: '50%',
                         loadState: 'pending' //pending or success or error
-                    };
+                    });
                 }
             }.bind(this));
         },
@@ -62,11 +69,11 @@ Vue.component('uk-previewer', {
             }
             state.scale = n;
         },
-        handleImageLoad: function (e, state) {
+        handleImageLoad: function (e, status) {
             var state = this.fileState[this.fileId];
             if(state){
-                state.loadState = state;
-                if (state === 'success') {
+                state.loadState = status;
+                if (status === 'success') {
                     this.autoScale(e.target);
                 }
             }
@@ -92,8 +99,8 @@ Vue.component('uk-previewer', {
                 return;
             }
             state.scale += n;
-            if (state.scale >= 3) {
-                state.scale = 3;
+            if (state.scale >= 6) {
+                state.scale = 6;
             }
             if (state.scale <= 0.1) {
                 state.scale = 0.1;
@@ -102,8 +109,8 @@ Vue.component('uk-previewer', {
         mousedown: function (e) {
             this.srcX = e.clientX;
             this.srcY = e.clientY;
-            this.offLeft = this.$refs.picbox.offsetLeft;
-            this.offTop = this.$refs.picbox.offsetTop;
+            this.offLeft = this.$refs.imageBox.offsetLeft;
+            this.offTop = this.$refs.imageBox.offsetTop;
             this.isMouseDown = true;
         },
         mousemove: function (e) {
@@ -116,29 +123,29 @@ Vue.component('uk-previewer', {
                 this.top = this.offTop + y + 'px';
             }
         },
+        resetFileLoadState:function(src,status){
+            this.fileState[this.fileId].loadState = 'pending';
+        },
         prevFile: function () {
-            if (this.index <= 1) {
+            if (this.computedIndex <= 1) {
                 return;
             }
             this.resetFileLoadState();
             var file = this.fileList.filter(function (file) {
                 return file.status === 'success';
-            })[this.index - 2];
+            })[this.computedIndex - 2];
 
             this.fileSrc = file.src;
             this.fileId = file.id;
         },
-        resetFileLoadState:function(src,status){
-            this.fileState[this.fileId].loadState = 'pending';
-        },
         nextFile: function () {
-            if (this.index >= this.count) {
+            if (this.computedIndex >= this.computedCount) {
                 return;
             }
             this.resetFileLoadState();
             var file = this.fileList.filter(function (file) {
                  return file.status === 'success';
-             })[this.index];
+             })[this.computedIndex];
 
             this.fileSrc = file.src;
             this.fileId = file.id;
@@ -155,11 +162,32 @@ Vue.component('uk-previewer', {
                     this.isMouseDown = false;
                 }.bind(this));
             });
+        },
+        setCurrent:function(n){
+            var index = n === undefined ? this.index : n;
+            if(index >= this.fileList.length){
+                index = this.fileList.length - 1;
+            }
+            if(index < 0){
+                index = 0;
+            }
+            this._index = index;
+            var file = this.fileList[this._index];
+            this.fileId = file.id;
+            this.fileSrc = file.src;
+        },
+        closePreviewer:function(){
+            this.visible = false;
+            this.$emit('update:visible',false);
         }
     },
     computed: {
         loadState: function () {
+            if(this.fileState[this.fileId]){
 
+                return this.fileState[this.fileId].loadState;
+            }
+            return 'pending';
         },
         transform:function(){
             var state = this.fileState[this.fileId];
@@ -168,22 +196,30 @@ Vue.component('uk-previewer', {
             }
             return 'rotate(0deg) scale(1) translate(-50%,-50%)';
         },
-       count: function () {
+       computedCount: function () {
            return this.fileList.filter(function (file) {
                return file.status === 'success'
            }).length;
        },
-       index: function () {
-           var current = 0;
+       computedIndex: function () {
+           var computedIndex = 0;
            for (var i = 0, len = this.fileList.length; i < len; i++) {
                if (this.fileList[i].status === 'success') {
-                   current++;
+                   computedIndex++;
                    if (this.fileList[i].id === this.fileId) {
-                       return current;
+                       return computedIndex;
                    }
                }
            }
-           return current;
+           return computedIndex;
        },
+    },
+    watch:{
+        index:function(index){
+            this.setCurrent();
+        },
+        fileList:function(){
+            this.createFileState();
+        }
     }
 });

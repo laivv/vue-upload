@@ -60,6 +60,7 @@
                     domain:'',
                     prefix:'',
                     showPreviewDialog:false,
+                    index:0,
 
                 }
             },
@@ -227,7 +228,8 @@
                     // }
                     this.$refs.file.click();
                 },
-                openPreviewDialog:function(){
+                openPreviewDialog:function(file){
+                    this.index = this.fileList.indexOf(file);
                     this.showPreviewDialog =true;
                 },
                 handleRemoveFile:function(file){
