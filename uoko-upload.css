@@ -6,6 +6,19 @@
     visibility: hidden;
     clear: both;
 }
+.uoko-upload-text-btn{
+    padding: 5px 10px;
+    outline: none;
+    color: #fff;
+    background-color: #24cbc1;
+    border:solid 1px #24cbc1;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.uoko-upload-text-btn:hover{
+    background: #50d5cd;
+    border-color: #50d5cd;
+}
 .uoko-upload-item {
     width: 25%;
     float: left;

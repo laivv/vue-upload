@@ -59,7 +59,7 @@
                     token:'',
                     domain:'',
                     prefix:'',
-                    key:''
+                    showPreviewDialog:false,
 
                 }
             },
@@ -226,6 +226,19 @@
                     //     return;
                     // }
                     this.$refs.file.click();
+                },
+                openPreviewDialog:function(){
+                    this.showPreviewDialog =true;
+                },
+                handleRemoveFile:function(file){
+                    var isRemove = true;
+                    if(this.onRemoveFile){
+                        isRemove = this.onRemoveFile(file);
+                        isRemove = isRemove === undefined ? true : isRemove;
+                    }
+                    if(isRemove){
+                        this.fileList.splice(this.fileList.indexOf(file),1);
+                    }
                 },
                 getFileExt:function(file){
                     var name = file.name ;

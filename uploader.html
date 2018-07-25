@@ -9,7 +9,7 @@
 <body>
 
     <div id="app">
-            <uk-upload :token-url="['111','222']" list-type="card"></uk-upload>
+            <uk-upload v-model="fileList" :token-url="['111','222']" list-type="card"></uk-upload>
     </div>
 
 
@@ -22,68 +22,63 @@
             <div>
                 <input v-if="multiple" multiple="multiple" ref='file' type="file" style="display:none;" @change="onFileChange">
                 <input v-else ref='file' type="file" style="display:none;" @change="onFileChange">
-                <button @click="openFileBrowser" v-if="!previewMode && listType !== 'card'">上传文件</button>
+                <button class="uoko-upload-text-btn" @click="openFileBrowser" v-if="!previewMode && listType !== 'card'">上传文件</button>
             </div>
-                <uk-file-list :file-list="fileList"></uk-file-list>
-                <div class="uoko-upload-item" v-if="!previewMode && listType === 'card'" v-show="enableUpload">
-                    <div class="uoko-upload-item-wrap">
-                        <div class="uoko-upload-item-content uoko-upload-add-btn"  @click="openFileBrowser">
-                            <div class="uoko-upload-full uoko-upload-add-btn">
-                                <span class="uoko-upload-add-icon">+</span>
+            <div class="uoko-upload-item" v-for="file in fileList">
+                <div class="uoko-upload-item-wrap">
+                    <div class="uoko-upload-item-content">
+                        <span class="uoko-upload-item-remove" @click="handleRemoveFile(file)" v-if="!previewMode">×</span>
+                        <div class="uoko-upload-full uoko-upload-img-wrap">
+                            <img :src="file.thumbSrc" v-if="supportView || file.status==='success'" @click="openPreviewDialog(file)" class="uoko-upload-img"
+                            />
+                        </div>
+                        <div class="uoko-upload-mask" v-show="file.status!=='success'">
+                            <div class="uoko-upload-progress" v-show="file.status =='pending'">
+                                <span class="uoko-upload-progress-bar">{{file.progress}}%</span>
                             </div>
+                            <span class="uoko-upload-error" v-if="file.status==='error'">!</span>
+                        </div>
+                        <div v-if="showFileName" class="uoko-upload-file-name" :title="file.name">{{file.name}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="uoko-upload-item" v-if="!previewMode && listType === 'card'" v-show="enableUpload">
+                <div class="uoko-upload-item-wrap">
+                    <div class="uoko-upload-item-content uoko-upload-add-btn" @click="openFileBrowser">
+                        <div class="uoko-upload-full uoko-upload-add-btn">
+                            <span class="uoko-upload-add-icon">+</span>
                         </div>
                     </div>
                 </div>
+            </div>
+            <uk-previewer :file-list="fileList" :visible="showPreviewDialog"></uk-previewer>
         </div>
     </div>
     <!-- uk-upload end -->
 
 
-    <!-- uk-file-list -->
-    <div style="display:none" id="filelist">
-        <div class="uoko-upload-item" v-for="file in fileList">
-            <div class="uoko-upload-item-wrap">
-                <div class="uoko-upload-item-content">
-                    <span class="uoko-upload-item-remove" @click="handleRemoveFile(file)" v-if="!readOnly">×</span>
-                    <div class="uoko-upload-full uoko-upload-img-wrap">
-                        <img :src="img.thumbSrc" v-if="supportView || file.status==='success'" @click="openPreviewDialog(file)" class="uoko-upload-img"
-                        />
-                    </div>
-                    <div class="uoko-upload-mask" v-show="file.status!=='success'">
-                        <div class="uoko-upload-progress" v-show="file.status =='pending'">
-                            <span class="uoko-upload-progress-bar">{{file.progress}}%</span>
-                        </div>
-                        <span class="uoko-upload-error" v-if="file.status==='error'">!</span>
-                    </div>
-                    <div v-if="showFileName" class="uoko-upload-file-name" :title="file.name">{{file.name}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- uk-file-list -->
-   
 
 
      <!-- uk-previewer -->
      <div style="display:none;" id="previewer">
-        <div class="uoko-upload-preview-dialog" v-show="showPreviewDialog">
+        <div class="uoko-upload-preview-dialog" v-show="visible">
             <div class="uoko-upload-preview-wrapper">
-                <div class="uoko-upload-imgwrapper" v-show="imageStatus === 'success'" :style="{transform:transform}" ref="picbox" @mousedown="mousedown($event)"
+                <div class="uoko-upload-imgwrapper" v-show="loadState === 'success'" :style="{transform:transform,left:left,top:top}" ref="picbox" @mousedown="mousedown($event)"
                     @mousemove="mousemove">
-                    <img :src="currentSrc" class="uoko-upload-preview-pic" @load="imageLoadHandler($event,'success')" @dragstart="imgDragStart($event)"
-                        @error="imageLoadHandler($event,'error')">
+                    <img :src="fileSrc" class="uoko-upload-preview-pic" @load="handleImageLoad($event,'success')" @dragstart="handleImageDragStart($event)"
+                        @error="handleImageLoad($event,'error')">
                 </div>
-                <div v-show="imageStatus === 'pending'" class="uoko-upload-loadtip">
+                <div v-show="loadState === 'pending'" class="uoko-upload-loadtip">
                     <i class="iconfont icon-loading"></i>
                 </div>
-                <div v-show="imageStatus === 'error'" class="uoko-upload-loadtiperr">
+                <div v-show="loadState === 'error'" class="uoko-upload-loadtiperr">
                     <i class="iconfont icon-loading-error"></i>
                 </div>
-                <div class="uoko-upload-uoko-upload-dialog-close" @click="showPreviewDialog = false">×</div>
-                <div class="uoko-upload-preview-prev-btn" @click="prevPic">&lt;</div>
-                <div class="uoko-upload-preview-next-btn" @click="nextPic">&gt;</div>
+                <div class="uoko-upload-uoko-upload-dialog-close" @click="visible = false">×</div>
+                <div class="uoko-upload-preview-prev-btn" @click="prevFile">&lt;</div>
+                <div class="uoko-upload-preview-next-btn" @click="nextFile">&gt;</div>
                 <div class="uoko-upload-preview-info">
-                    <div>{{current}}/{{total}}</div>
+                    <div>{{index}}/{{count}}</div>
                     <div class="uoko-upload-preview-info-btns">
                         <button @click="rotate(-90)" title="向左旋转">
                             <i class="iconfont icon-xuanzhuan1"></i>
@@ -103,10 +98,10 @@
                         <button @click="scale(-0.2)" title="缩小">
                             <i class="iconfont icon-suoxiao"></i>
                         </button>
-                        <button @click="prevPic" title="上一张">
+                        <button @click="prevFile" title="上一个">
                             <i class="iconfont icon-jiantou"></i>
                         </button>
-                        <button @click="nextPic" title="下一张">
+                        <button @click="nextFile" title="下一个">
                             <i class="iconfont icon-endarrow"></i>
                         </button>
                     </div>
@@ -125,7 +120,6 @@
         <link rel="stylesheet" href="uoko-upload.css">
         <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
         <script src="uploader.js"></script>
-        <script src="uk-file-list.js"></script>
         <script src="uk-previewer.js"></script>
         <script src="uk-upload.js"></script>
 
@@ -142,7 +136,9 @@
             el:"#app",
             data:function(){
                 return{
-
+                    fileList:[{src:'http://ooydngjcf.bkt.clouddn.com/Contract.E00EFDA4.png'},
+                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.8036359D.png'},
+                       {src:'http://ooydngjcf.bkt.clouddn.com/Contract.3A54B8D2.png'}]
                 }
             },
             methods:{
