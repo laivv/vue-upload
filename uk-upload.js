@@ -36,6 +36,8 @@
                    default:true
                },
                beforeFileAdd:Function,
+               onFileClick:Function,
+               onFileRemove:Function,
                showFileName:{
                    type:Boolean,
                    default:false
@@ -228,16 +230,21 @@
                     // }
                     this.$refs.file.click();
                 },
-                openPreviewDialog:function(file){
-                    if(file.status === 'success'){
+                handleFileClick:function(file){
+                    var next = true;
+                    if(this.onFileClick){
+                        next = this.onFileClick(file);
+                        next = next === undefined ? true : next;
+                    }
+                    if(next && file.status === 'success'){
                         this.index = this.fileList.indexOf(file);
                         this.showPreviewDialog = true;
                     }
                 },
-                handleRemoveFile:function(file){
+                handleFileRemove:function(file){
                     var isRemove = true;
-                    if(this.onRemoveFile){
-                        isRemove = this.onRemoveFile(file);
+                    if(this.onFileRemove){
+                        isRemove = this.onFileRemove(file);
                         isRemove = isRemove === undefined ? true : isRemove;
                     }
                     if(isRemove){

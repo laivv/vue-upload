@@ -64,6 +64,7 @@
 .uk-upload-mask {
     background-color: rgba(0, 0, 0, 0.2);
 }
+
 .uk-upload-progress {
     height: 40px;
     width: 40px;
@@ -80,8 +81,8 @@
     color: #fff;
     line-height: 40px;
 }
-.uk-upload-error {
-    width: 20px;
+.uk-upload-error .iconfont{
+    /* width: 20px;
     height: 20px;
     line-height: 20px;
     background: red;
@@ -89,13 +90,30 @@
     border-radius: 50%;
     display: block;
     text-align: center;
-    font-weight: bold;
+    font-weight: bold; */
+    color:red;
+    font-size: 20px;
 }
-.uk-upload-error{
+.uk-upload-error,
+.uk-upload-retry{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.uk-upload-retry{
+    display: none;
+    cursor: pointer;
+    color: #24cbc1;
+}
+.uk-upload-retry .iconfont{
+    font-size: 20px;
+}
+.uk-upload-mask-error:hover .uk-upload-retry{
+    display: inline-block;
+}
+.uk-upload-mask-error:hover .uk-upload-error{
+    display: none;
 }
 .uk-upload-item-remove {
     display: block;
@@ -191,9 +209,6 @@
 .uk-upload-list-retry{
     display: none;
     cursor: pointer;
-}
-.uk-upload-list-retry .iconfont{
-    font-size: 14px;
 }
 .uk-upload-list-remove{
     display: none;

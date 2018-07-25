@@ -26,7 +26,7 @@
             :token-url="['111','222']" 
             list-type="card" 
             :enable-upload="false"
-            :show-file-name="true"
+            :show-file-name="false"
             :preview-mode="false"
             >
         </uk-upload>
@@ -48,16 +48,17 @@
                 <div class="uk-upload-item" v-for="file in fileList">
                     <div class="uk-upload-item-wrap">
                         <div class="uk-upload-item-content">
-                            <span class="uk-upload-item-remove" @click="handleRemoveFile(file)" v-if="!previewMode">×</span>
-                            <div class="uk-upload-full uk-upload-img-wrap">
-                                <img :src="file.thumbSrc" v-if="supportView || file.status==='success'" @click="openPreviewDialog(file)" class="uk-upload-img"
+                            <span class="uk-upload-item-remove" @click="handleFileRemove(file)" v-if="!previewMode">×</span>
+                            <div class="uk-upload-full uk-upload-img-wrap" @click="handleFileClick(file)">
+                                <img :src="file.thumbSrc" v-if="supportView || file.status==='success'" class="uk-upload-img"
                                 />
                             </div>
-                            <div class="uk-upload-mask" v-show="file.status!=='success'">
+                            <div class="uk-upload-mask" :class="{'uk-upload-mask-error':file.status === 'error'}" v-show="file.status!=='success'">
                                 <div class="uk-upload-progress" v-show="file.status =='pending'">
                                     <span class="uk-upload-progress-bar">{{file.progress}}%</span>
                                 </div>
-                                <span class="uk-upload-error" v-if="file.status==='error'">!</span>
+                                <span class="uk-upload-error" v-if="file.status==='error'"><i class="iconfont icon-error"></i></span>
+                                <span class="uk-upload-retry" @click="reload(file)" title="重试"><i class="iconfont icon-zhongfa"></i></span>
                             </div>
                             <div v-if="showFileName" class="uk-upload-file-name" :title="file.name">{{file.name}}</div>
                         </div>
@@ -76,16 +77,16 @@
             <ul v-else>
                 <li class="uk-upload-list-item" v-for="file in fileList">
                     <div class="uk-upload-list-name uk-upload-clearfix">
-                        <span class="uk-upload-list-title" :class="{'uk-upload-list-error':file.status === 'error'}" @click="openPreviewDialog(file)">{{file.name}}</span>
+                        <span class="uk-upload-list-title" :class="{'uk-upload-list-error':file.status === 'error'}" @click="handleFileClick(file)">{{file.name}}</span>
                         <span class="uk-upload-list-icons uk-upload-right" v-if="!previewMode">
                             <span class="uk-upload-list-tip" v-if="file.status === 'pending'">{{file.progress}}%</span>
                             <template v-if="file.status === 'error'">
-                                <span class="uk-upload-list-retry" title="重试" @click="reload(file)"><i class="iconfont icon-retry"></i></span>
+                                <span class="uk-upload-list-retry" title="重试" @click="reload(file)"><i class="iconfont icon-zhongfa"></i></span>
                                 <span class="uk-upload-list-tip uk-upload-list-error"><i class="iconfont icon-iconsb"></i></span>
                             </template>
                             <span class="uk-upload-list-tip" v-if="file.status === 'success'"><i class="iconfont icon-icon-check-solid"></i></span>
                             <span v-if="file.status === 'waiting'" class="uk-upload-list-tip uk-upload-list-wait"><i class="iconfont icon-waiting"></i></span>
-                            <span class="uk-upload-list-remove" @click="handleRemoveFile(file)" title="删除">×</span>
+                            <span class="uk-upload-list-remove" @click="handleFileRemove(file)" title="删除">×</span>
                         </span>
                     </div>
                     <div class="uk-upload-list-progress" v-if="file.status === 'pending'">
