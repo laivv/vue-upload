@@ -6,30 +6,39 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        *{
-            margin: 0;
-            padding: 0;
-        }
+      
         .app{
             padding:20px;
         }
-        ul,li{
-            list-style: none;
-        }
+        
     </style>
 </head>
 <body>
 
     <div id="app" class="app">
             <uk-upload 
+            ref="upload"
             v-model="fileList" 
             :token-url="['111','222']" 
-            list-type="card" 
-            :enable-upload="false"
-            :show-file-name="false"
+            list-type="text"
+            :multiple="true"
+            :enable-upload="true"
+            :max-file-count="5"
+            :show-file-name="true"
             :preview-mode="false"
+            :show-file-list="true"
+            :max-file-size="0"
+            :extensions="[]"
+            :before-file-add="beforeFileAdd"
+            :on-file-remove="onFileRemove"
+            :on-file-click="onFileClick"
+            thumb-query="?imgview/w/100/height/50"
             >
         </uk-upload>
+        <button @click="getStatus">获取上传状态</button>
+        <button @click="getSuccessList">获取上传成功的文件列表</button>
+        <button @click="getErrorList">获取上传失败的文件列表</button>
+        <button @click="getUploadingList">获取上传中的文件列表</button>
     </div>
 
 
@@ -42,9 +51,10 @@
             <input v-if="multiple" multiple="multiple" ref='file' type="file" style="display:none;" @change="onFileChange">
             <input v-else ref='file' type="file" style="display:none;" @change="onFileChange">
             <div class="uk-upload-text" v-if="!previewMode && listType !== 'card'">
-                <button class="uk-upload-text-btn" @click="openFileBrowser" :disabled="!enableUpload">上传文件</button>
+                <button class="uk-upload-text-btn" @click="openFileBrowser" :disabled="!enableUpload || overMaxCount">上传文件</button>
             </div>
             <template v-if="listType === 'card'">
+                <template v-if="showFileList">
                 <div class="uk-upload-item" v-for="file in fileList">
                     <div class="uk-upload-item-wrap">
                         <div class="uk-upload-item-content">
@@ -64,7 +74,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="uk-upload-item" v-if="!previewMode" v-show="enableUpload">
+            </template>   
+                <div class="uk-upload-item" v-if="!previewMode && enableUpload && !overMaxCount">
                     <div class="uk-upload-item-wrap">
                         <div class="uk-upload-item-content uk-upload-add-btn" @click="openFileBrowser">
                             <div class="uk-upload-full uk-upload-add-btn">
@@ -74,7 +85,8 @@
                     </div>
                 </div>
             </template>
-            <ul v-else>
+            <template v-else>
+            <ul v-if="showFileList" class="uk-upload-list">
                 <li class="uk-upload-list-item" v-for="file in fileList">
                     <div class="uk-upload-list-name uk-upload-clearfix">
                         <span class="uk-upload-list-title" :class="{'uk-upload-list-error':file.status === 'error'}" @click="handleFileClick(file)">{{file.name}}</span>
@@ -95,6 +107,7 @@
                     
                 </li>
             </ul>
+        </template>
             <uk-previewer :file-list="fileList" :visible.sync="showPreviewDialog" :index="index"></uk-previewer>
         </div>
     </div>
@@ -188,7 +201,33 @@
                 }
             },
             methods:{
-
+                beforeFileAdd:function(file){
+                    console.log(file)
+                },
+                onFileRemove:function(file){
+                    console.log(file);
+                    return true;
+                },
+                onFileClick:function(file){
+                    console.log(file);
+                    return true;
+                },
+                getStatus:function(){
+                   var status = this.$refs.upload.getUploadStatus();
+                   console.log(status);
+                },
+                getSuccessList:function(){
+                    var status = this.$refs.upload.getSuccessFileList();
+                   console.log(status);
+                },
+                getErrorList:function(){
+                    var status = this.$refs.upload.getErrorFileList();
+                   console.log(status);
+                },
+                getUploadingList:function(){
+                    var status = this.$refs.upload.getUploadingFileList();
+                   console.log(status);
+                }
             }
         })
     </script>

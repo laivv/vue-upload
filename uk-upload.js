@@ -66,6 +66,14 @@
 
                 }
             },
+            computed:{
+                overMaxCount:function(){
+                    if(this.maxFileCount <=0){
+                        return false;
+                    }
+                    return this.fileList.length >= this.maxFileCount;
+                }
+            },
             created:function(){
                 this.fileList = this.value;
                 this.propFix();
@@ -166,7 +174,7 @@
                            file.name = file.src.split('/').pop();
                        }
                        if(file.ext === undefined){
-                           file.ext = '';
+                           file.ext = _self.getFileExt(file.name);
                        }
                        if(file.size === undefined){
                            file.size = '';
@@ -197,6 +205,25 @@
                         return 'audio';
                     }
                     return 'file';
+                },
+                getFileList:function(status){
+                    return this.fileList.filter(function(file){
+                        return file.status === status;
+                    });
+                },
+                getSuccessFileList:function(){
+                   return this.getFileList('success');
+                },
+                getUploadingFileList:function(){
+                    return this.fileList.filter(function(file){
+                        return file.status === 'pending' || file.status === 'waiting';
+                    });
+                },
+                getErrorFileList:function(){
+                    return this.getFileList('error');
+                },
+                getUploadStatus:function(){
+                    return this.getUploadingFileList().length ? 'uploading' : 'completed'; 
                 },
                 createId:function(){
                     var id = 0;
@@ -252,8 +279,11 @@
                     }
                 },
                 getFileExt:function(file){
-                    var name = file.name ;
-                    var res = name.match(/\.(\w+)$/i);
+                    var name = file;
+                    if(typeof file === 'object'){
+                        name = file.name ;
+                    }
+                    var res = name.match(/\.([\w\d]{1,4})$/i);
                     return res ? res[1].toLowerCase() : '';
                 },
                 getFileSize:function(file){
@@ -333,7 +363,7 @@
                        if(this.validateFile(file)){
                            if(this.beforeFileAdd){
                                var next = this.beforeFileAdd(file);
-                               next = next === undefined ? true : false;
+                               next = next === undefined ? true : next;
                                if(!next){
                                     return;
                                }
