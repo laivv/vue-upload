@@ -20,7 +20,7 @@
             ref="upload"
             v-model="fileList" 
             :token-url="['111','222']" 
-            list-type="text"
+            :list-type="listType"
             :multiple="true"
             :enable-upload="true"
             :max-file-count="5"
@@ -39,6 +39,7 @@
         <button @click="getSuccessList">获取上传成功的文件列表</button>
         <button @click="getErrorList">获取上传失败的文件列表</button>
         <button @click="getUploadingList">获取上传中的文件列表</button>
+        <button @click="switchListType">切换列表类型</button>
     </div>
 
 
@@ -194,6 +195,7 @@
             el:"#app",
             data:function(){
                 return{
+                    listType:'card',
                     fileList:[{src:'http://ooydngjcf.bkt.clouddn.com/Contract.E00EFDA4.png',status:'error'},
                        {src:'http://ooydngjcf.bkt.clouddn.com/Contract.8036359D.png',status:'success'},
                        {src:'http://ooydngjcf.bkt.clouddn.com/Contract.8036359D.png',status:'pending'},
@@ -227,6 +229,9 @@
                 getUploadingList:function(){
                     var status = this.$refs.upload.getUploadingFileList();
                    console.log(status);
+                },
+                switchListType:function(){
+                    this.listType = this.listType == 'card' ?  'text' :'card';
                 }
             }
         })

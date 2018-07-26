@@ -1,0 +1,239 @@
+@import 'font/iconfont.css';
+.uk-upload-right{
+    float: right;
+}
+.uk-upload-clearfix:after {
+    content: '';
+    display: block;
+    height: 0!important;
+    visibility: hidden;
+    clear: both;
+}
+.uk-upload-text{
+    padding-bottom: 10px;
+}
+.uk-upload-text-btn{
+    padding: 5px 10px;
+    outline: none;
+    color: #fff;
+    background-color: #24cbc1;
+    border:solid 1px #24cbc1;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.uk-upload-text-btn:hover{
+    background: #50d5cd;
+    border-color: #50d5cd;
+}
+.uk-upload-text-btn:disabled{
+    cursor: not-allowed;
+    background: #50d5cd;
+    border:solid 1px #24cbc1;
+}
+.uk-upload-text-btn:disabled:hover{
+    background: #50d5cd;
+    border:solid 1px #24cbc1;
+}
+.uk-upload-item {
+    width: 25%;
+    float: left;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+}
+.uk-upload-item-wrap {
+    width: 85%;
+    position: relative;
+    padding-top: 85%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.uk-upload-item-content,
+.uk-upload-mask {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.uk-upload-full {
+    width: 100%;
+    height: 100%;
+}
+.uk-upload-item-content {
+    border: solid 1px #d8d8d8;
+}
+.uk-upload-mask {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.uk-upload-progress {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    border: solid 5px rgba(255,255,255,0.6);
+    text-align: center;
+}
+.uk-upload-progress-bar {
+    text-align: center;
+    color: #fff;
+    line-height: 40px;
+}
+.uk-upload-error .iconfont{
+    /* width: 20px;
+    height: 20px;
+    line-height: 20px;
+    background: red;
+    color: #fff;
+    border-radius: 50%;
+    display: block;
+    text-align: center;
+    font-weight: bold; */
+    color:red;
+    font-size: 20px;
+}
+.uk-upload-img-wrap .iconfont{
+    font-size: 60px;
+    color:#888;
+}
+.uk-upload-img-wrap .iconfont,
+.uk-upload-error,
+.uk-upload-retry{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.uk-upload-retry{
+    display: none;
+    cursor: pointer;
+    color: #24cbc1;
+}
+.uk-upload-retry .iconfont{
+    font-size: 20px;
+}
+.uk-upload-mask-error:hover .uk-upload-retry{
+    display: inline-block;
+}
+.uk-upload-mask-error:hover .uk-upload-error{
+    display: none;
+}
+.uk-upload-item-remove {
+    display: block;
+    text-align: center;
+    border-radius: 50%;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    -webkit-transform: translate(40%, -40%);
+    transform: translate(30%, -30%);
+    background: rgba(0, 0, 0, .3);
+    z-index: 2;
+    font-size: 20px;
+    cursor: pointer;
+    font-family: monospace,serif;
+}
+.uk-upload-item-remove:hover {
+    background: rgba(0, 0, 0, .4);
+}
+.uk-upload-add-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    font-family: -webkit-pictograph,-webkit-body,monospace,sans-serif,serif;
+    color: #ccc;
+}
+.uk-upload-add-btn {
+    cursor: pointer;
+}
+.uk-upload-img {
+    width: 100%;
+    max-height: 100%;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.uk-upload-img-wrap {
+    overflow: hidden;
+}
+.uk-upload-file-name{
+    color: #888;
+    text-align: center;
+    padding-top:5px;
+}
+.uk-upload-file-name,
+.uk-upload-list-name{
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.uk-upload-list-name{
+    padding: 5px 0;
+}
+.uk-upload-list,
+.uk-upload-list-item{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.uk-upload-list-item{
+    color: #24cbc1;
+    padding: 5px 0;
+}
+.uk-upload-list-title{
+    cursor: pointer;
+}
+.uk-upload-list-icons>span{
+   vertical-align: middle;
+}
+.uk-upload-list-progress{
+    width:100%;
+    height: 3px;
+    background: #ccc;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.uk-upload-list-progress-bar{
+    height: 100%;
+    background-color:#24cbc1;
+}
+.uk-upload-error-bar{
+    background: red;
+}
+.uk-upload-list-error{
+    color:red;
+}
+.uk-upload-list-wait .iconfont{
+    color:#aaa;
+}
+.uk-upload-list-retry{
+    display: none;
+    cursor: pointer;
+}
+.uk-upload-list-remove{
+    display: none;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: monospace,serif;
+    font-weight: bold;
+    color:#888;
+}
+.uk-upload-list-item:hover .uk-upload-list-retry,
+.uk-upload-list-item:hover .uk-upload-list-remove{
+    display: inline;
+}
+.uk-upload-list-item:hover .uk-upload-list-tip{
+    display: none;
+}
