@@ -287,16 +287,16 @@
                 });
             },
             getFileType(file) {
-                if (['jpg', 'png', 'gif', 'bmp', 'jpeg'].indexOf(file.ext) > -1) {
+                if (['jpg', 'png', 'gif', 'bmp', 'jpeg','webp'].indexOf(file.ext) > -1) {
                     return 'image';
                 }
-                if (['rar', 'zip', '7z'].indexOf(file.ext) > -1) {
+                if (['rar', 'zip', '7z','cab'].indexOf(file.ext) > -1) {
                     return 'rar';
                 }
-                if (['mp4', 'avi', 'rmvb', 'mkv'].indexOf(file.ext) > -1) {
-                    return 'video'
+                if (['mp4', 'avi', 'rmvb', 'mkv','3gp'].indexOf(file.ext) > -1) {
+                    return 'video';
                 }
-                if (['mp3', 'ogg', 'm4a'].indexOf(file.ext) > -1) {
+                if (['mp3', 'ogg', 'm4a','wav','ape','flac','wma','aac','amr'].indexOf(file.ext) > -1) {
                     return 'audio';
                 }
                 return 'file';
