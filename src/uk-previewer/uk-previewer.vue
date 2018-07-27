@@ -17,7 +17,7 @@
                     </template>
                     <template v-else>
                         <div class="uk-previewer-center uk-previewer-video">
-                        <uk-video-player :src="fileSrc"></uk-video-player>
+                        <uk-video-player :src="fileSrc" :type="fileType"></uk-video-player>
                         </div>
                     </template>
                 </template>
@@ -85,6 +85,7 @@ export default {
     data: function () {
         return {
             _index:0,
+            _visible:false,
             fileSrc:'',
             fileId: '',
             fileType :'image',
@@ -252,7 +253,7 @@ export default {
             
         },
         closePreviewer:function(){
-            this.visible = false;
+           // this.visible = false;
             this.$emit('update:visible',false);
         }
     },

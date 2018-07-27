@@ -161,7 +161,7 @@ export default {
                     this.paused = true;
                     var video = this.$refs.video;
                     video.currentTime = 0;
-                    video.paused = true;
+                    //video.paused = true;
                     this.showToolbar = true;
                 }
             },
@@ -174,7 +174,7 @@ export default {
                 }
                 var video = this.$refs.video;
                 this.paused = !this.paused;
-                video.paused = this.paused;
+                //video.paused = this.paused;
                 video[this.paused? 'pause' : 'play']();
             },
             setProgress:function(e){
@@ -187,7 +187,7 @@ export default {
                 var video = this.$refs.video;
                 video.currentTime = this.duration * percent;
                 this.paused = false;
-                video.paused = false;
+                //video.paused = false;
                 video.play();
             },
             getHoverTime:function(e){

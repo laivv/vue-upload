@@ -258,7 +258,7 @@ export default {
                            file.id = _self.createId();
                        }
                        if(file.name === undefined){
-                           file.name = file.src.split('/').pop();
+                           file.name = file.src.split('/').pop().trim();
                        }
                        if(file.ext === undefined){
                            file.ext = _self.getFileExt(file.name);
@@ -447,7 +447,7 @@ export default {
                    files.forEach(function(rawFile){
                        var file = {
                            id:this.createId(),
-                           name:rawFile.name,
+                           name:rawFile.name.trim(),
                            src:'',
                            ext:this.getFileExt(rawFile),
                            size:this.getFileSize(rawFile),
