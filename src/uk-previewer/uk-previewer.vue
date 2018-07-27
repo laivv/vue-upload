@@ -1,10 +1,10 @@
 <template>
     <div class="uk-previewer" v-show="visible">
-        <template v-if="['image','video','audio'].indexOf(fileType) > -1">
+        <template v-if="['image','video','audio','text'].indexOf(fileType) > -1">
             <template v-if="fileType === 'image'">
                 <div class="uk-previewer-image-wrapper" v-show="loadState === 'success'" :style="{transform:transform,left:left,top:top}"
                     ref="imageBox" @mousedown="mousedown($event)" @mousemove="mousemove">
-                    <img :src="fileSrc" @load="handleImageLoad($event,'success')" @dragstart="handleImageDragStart($event)" @error="handleImageLoad($event,'error')">
+                    <img :src="fileSrc" @load="handleFileLoad($event,'success',true)" @dragstart="handleImageDragStart($event)" @error="handleFileLoad($event,'error',true)">
                 </div>
                 <div v-show="loadState === 'pending'" class="uk-previewer-loading">
                     <i class="iconfont icon-loading"></i>
@@ -13,9 +13,14 @@
                     <i class="iconfont icon-loading-error"></i>
                 </div>
             </template>
-            <template v-else>
+            <template v-if="['video','audio'].indexOf(fileType) > -1">
                 <div class="uk-previewer-center uk-previewer-video" v-if="visible">
                     <uk-video-player :src="fileSrc" :type="fileType"></uk-video-player>
+                </div>
+            </template>
+            <template v-if="fileType === 'text'">
+                <div class="uk-previewer-center uk-previewer-text">
+                    <uk-text-viewer :src="fileSrc" @load="handleFileLoad($event,'success',false)" @error="handleFileLoad($event,'error',false)"></uk-text-viewer>
                 </div>
             </template>
         </template>
@@ -58,6 +63,7 @@
 </template>
 <script>
     import UkVideoPlayer from '../uk-video-player/index.js';
+    import UkTextViewer from '../uk-text-viewer/index.js';
     export default {
         props: {
             fileList: {
@@ -78,7 +84,8 @@
             }
         },
         components: {
-            UkVideoPlayer
+            UkVideoPlayer,
+            UkTextViewer
         },
         data() {
             return {
@@ -136,11 +143,11 @@
                 }
                 state.scale = n;
             },
-            handleImageLoad(e, status) {
+            handleFileLoad(e, status,isImage) {
                 let state = this.fileState[this.fileId];
                 if (state) {
                     state.loadState = status;
-                    if (status === 'success') {
+                    if (status === 'success' && isImage) {
                         this.autoScale(e.target);
                     }
                 }

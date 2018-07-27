@@ -290,11 +290,14 @@
                 if (['jpg', 'png', 'gif', 'bmp', 'jpeg','webp'].indexOf(file.ext) > -1) {
                     return 'image';
                 }
+                if (['mp4', 'avi', 'rmvb', 'mkv','3gp'].indexOf(file.ext) > -1) {
+                    return 'video';
+                }
                 if (['rar', 'zip', '7z','cab'].indexOf(file.ext) > -1) {
                     return 'rar';
                 }
-                if (['mp4', 'avi', 'rmvb', 'mkv','3gp'].indexOf(file.ext) > -1) {
-                    return 'video';
+                if(file.ext === 'txt'){
+                    return 'text';
                 }
                 if (['mp3', 'ogg', 'm4a','wav','ape','flac','wma','aac','amr'].indexOf(file.ext) > -1) {
                     return 'audio';

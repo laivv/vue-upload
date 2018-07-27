@@ -36,7 +36,8 @@
     color: #fff;
     font-weight: bold;
 }
-.uk-previewer-video{
+.uk-previewer-video,
+.uk-previewer-text{
     height: 80%;
     width: 80%;
 }

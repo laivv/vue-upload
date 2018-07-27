@@ -28,7 +28,11 @@
                     'http://www.w3school.com.cn/example/html5/mov_bbb.mp4',
                     'http://yun.it7090.com/video/XHLaunchAd/video03.mp4',
                     'http://yun.it7090.com/video/XHLaunchAd/video01.mp4',
-                    '不支持的文件测试-unknow'
+                    '不支持的文件测试-unknow',
+                    {
+                        src:'http://ooydngjcf.bkt.clouddn.com/ServiceProvider.67823423.测试文本.txt',
+                        type:'text'
+                    }
                 ]
             }
         },
