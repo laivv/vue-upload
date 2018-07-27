@@ -1,7 +1,7 @@
 <template>
     <div class="uk-text-viewer">
-        <iframe :src="src" class="uk-text-viewer-iframe" name="uk-text-viewer-iframe" ref="iframe"></iframe>
-        <!-- {{text}} -->
+        <!-- <iframe :src="src" class="uk-text-viewer-iframe" name="uk-text-viewer-iframe" ref="iframe"></iframe> -->
+        <div class="uk-text-viewer-text"> {{text}}</div>
     </div>
 </template>
 <script>
@@ -15,10 +15,10 @@
             }
         },
         mounted() {
-            //this.request(true);
+            this.request(true);
         },
         beforeDestory() {
-            //this.request(false);
+            this.request(false);
         },
         methods: {
             request: function () {
@@ -38,10 +38,17 @@
                         return;
                     }
                     xhr = new XMLHttpRequest();
+                    xhr.responseType = 'arraybuffer';
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) {
                             if (xhr.status === 200) {
+                                try{
+                                    _self.text =  (new TextDecoder('gbk')).decode(new DataView(xhr.response));
+                                }catch(e){
                                 _self.text = xhr.responseText;
+                                    
+                                }
+                               // console.log(xhr.responseText);
                                 _self.$emit('load');
                             } else {
                                 _self.$emit('error');
@@ -57,7 +64,7 @@
         },
         watch: {
             src() {
-                //this.request(true);
+                this.request(true);
             }
         }
     }
@@ -68,6 +75,14 @@
         height: 100%;
         overflow-x: hidden;
         overflow-y: auto;
+    }
+    .uk-text-viewer-text{
+        width: 100%;
+        background: #fff;
+        line-height: 30px;
+        letter-spacing: 2px;
+        box-sizing: border-box;
+        padding: 20px;
     }
     .uk-text-viewer::-webkit-scrollbar{
         width: 5px;
@@ -82,10 +97,5 @@
     }
     .uk-text-viewer::-webkit-scrollbar-button{
         display: none;
-    }
-    .uk-text-viewer-iframe {
-        width: 100%;
-        min-height: 90%;
-        background: #fff;
     }
 </style>

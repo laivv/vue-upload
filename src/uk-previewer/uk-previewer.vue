@@ -226,7 +226,7 @@
             init() {
                 this.$nextTick(function () {
                     document.addEventListener('mousewheel', function (e) {
-                        if (this.visible) {
+                        if (this.visible && this.fileType === 'image') {
                             e.preventDefault();
                             this.scale(e.deltaY > 0 ? -0.2 : 0.2);
                         }
