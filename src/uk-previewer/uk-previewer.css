@@ -31,7 +31,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
- 
 }
 .uk-previewer-unsupport{
     color: #fff;
@@ -41,6 +40,27 @@
     height: 80%;
     width: 80%;
 }
+.uk-previewer-text{
+    overflow:auto;
+    box-sizing: border-box;
+    padding: 5px;
+    max-height: 80%;
+    width:80%;
+}
+.uk-previewer-text::-webkit-scrollbar{
+    width: 5px;
+    height: 5px;
+}
+.uk-previewer-text::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+    border-radius: 5px;
+}
+.uk-previewer-text::-webkit-scrollbar-track{
+    display: none;
+}
+.uk-previewer-text::-webkit-scrollbar-button{
+    display: none;
+}
 .uk-previewer-loading,
 .uk-previewer-error{
     display: inline-block;
@@ -49,7 +69,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: #fff;
-   
 }
 .uk-previewer-loading{
     transform-origin: 0,0;
