@@ -12,8 +12,9 @@
             </div>
             <span class="video-player-loading video-player-layout-center" v-show="isLoading">缓冲中...</span>
             <video v-show="loadStatus" @playing="playing" @waiting="waiting" @error="loadError" @dblclick="onScreen" @click="onPlay"
-                ref="video" class="video-player-video" :class="{'video-player-fullscreen':isFullScreen}" @timeupdate="timeupdate"
-                @canplay="canplay" :src="src"></video>
+                ref="video" class="video-player-video video-player-layout-center" @timeupdate="timeupdate"
+                @canplay="canplay" :src="src">
+            </video>
         </template>
         <template v-if="type === 'audio'">
             <div class="video-player-audio-window">
@@ -26,7 +27,7 @@
             </div>
             <span class="video-player-loading video-player-layout-center" v-show="isLoading">缓冲中...</span>
             <audio v-show="loadStatus" @playing="playing" @waiting="waiting" @error="loadError" @dblclick="onScreen" @click="onPlay"
-                ref="video" class="video-player-video" :class="{'video-player-fullscreen':isFullScreen}" @timeupdate="timeupdate"
+                ref="video" class="video-player-video" @timeupdate="timeupdate"
                 @canplay="canplay" :src="src"></audio>
         </template>
         <div class="video-player-toolbar">
@@ -116,6 +117,9 @@
                         });
                     })
             })
+        },
+        beforeDestory() {
+            this.$refs.video && this.$refs.video.pause();
         },
         computed: {
             progress() {

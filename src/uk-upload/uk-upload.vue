@@ -301,24 +301,41 @@
                 }
                 return 'file';
             },
-            getFileList(status) {
-                return this.fileList.filter(function (file) {
-                    return file.status === status;
+            getFileListByStatus(status) {
+                let files = [];
+                this.fileList.forEach(file => {
+                    if(status.indexOf(file.status) > -1){
+                        files.push({
+                            name:file.name,
+                            ext:file.ext,
+                            src:file.src,
+                            status:file.status
+                        });
+                    }
+                });
+                return files;
+            },
+            getFileList() {
+                return this.fileList.map(file=>{
+                    return {
+                        name:file.name,
+                        ext:file.ext,
+                        src:file.src,
+                        status:file.status
+                    }
                 });
             },
             getSuccessFileList() {
-                return this.getFileList('success');
+                return this.getFileListByStatus(['success']);
             },
             getUploadingFileList() {
-                return this.fileList.filter(function (file) {
-                    return file.status === 'pending' || file.status === 'waiting';
-                });
+                return this.getFileListByStatus(['pending','waiting']);
             },
             getErrorFileList() {
-                return this.getFileList('error');
+                return this.getFileListByStatus(['error']);
             },
             getUploadStatus() {
-                return this.getUploadingFileList().length ? 'uploading' : 'completed';
+                return this.getUploadingFileList().length ? 'uploading' : 'complete';
             },
             createId: function () {
                 let id = 0;

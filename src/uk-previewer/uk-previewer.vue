@@ -14,7 +14,7 @@
                 </div>
             </template>
             <template v-else>
-                <div class="uk-previewer-center uk-previewer-video">
+                <div class="uk-previewer-center uk-previewer-video" v-if="visible">
                     <uk-video-player :src="fileSrc" :type="fileType"></uk-video-player>
                 </div>
             </template>
