@@ -31,7 +31,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
- 
 }
 .uk-previewer-unsupport{
     color: #fff;
@@ -49,7 +48,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: #fff;
-   
 }
 .uk-previewer-loading{
     transform-origin: 0,0;
