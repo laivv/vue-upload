@@ -43,7 +43,6 @@
 .uk-previewer-text{
     overflow:auto;
     box-sizing: border-box;
-    padding: 5px;
     max-height: 80%;
     width:80%;
 }
