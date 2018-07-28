@@ -14,9 +14,14 @@
             color:#fff;
             font-weight: bold;   
         }
-        .video-player-load-error .iconfont,
-        .video-player-audio-window .iconfont{
+        .video-player-load-error .iconfont{
             font-size: 60px;
+        }
+        .video-player-audio-window .iconfont{
+            font-size: 45px;
+        }
+        .video-player-audio-icon{
+            padding-bottom: 10px;
         }
         .video-player-video {
             max-width: 100%;
@@ -86,10 +91,17 @@
         }
         .video-player-fullscreen{
             position: fixed!important;
+        }
+        .video-player-fullscreen,
+        .video-player-mask{
             top:0!important;
             left:0!important;
             width:100%!important;
             height: 100%!important;
+        }
+        .video-player-mask{
+            position: absolute;
+            background: rgba(0, 0, 0, 0.3);
         }
         .video-player-rate-btn{
             position: relative;
@@ -163,8 +175,47 @@
             opacity: 0;
         }
         .video-player-loading{
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 6px;
             color:#fff;
             z-index: 2;
+        }
+        @keyframes rotate{
+            form{
+                transform: rotate(0deg);
+            }
+            to{
+                transform: rotate(360deg);
+            }
+        }
+        .video-player-loading-load{
+            transform-origin: 0,0;
+            transform: rotate(0deg);
+            animation: rotate 1s linear infinite;
+            color: #fff;
+            display: inline-block;
+        }
+        .video-player-loading-load.iconfont{
+            font-size: 35px;
+        }
+        .video-player-fetch-text{
+            padding-top: 10px;
+            font-size: 14px;
+        }
+        .video-player-quick-btn{
+            display: inline-block;
+            cursor: pointer;
+        }
+        .video-player-quick-btn .iconfont
+        {
+            font-size: 80px;
+            color: #fff;
+        }
+        @media screen and (max-width : 640px){
+            .video-player-mini-hide{
+                display: none!important;
+            }
         }
         video::-webkit-media-controls,
         video::-moz-media-controls,

@@ -108,6 +108,8 @@
 .uk-previewer-toolbar{
     padding : 10px 0;
     background: rgba(0,0,0,0.4);
+    white-space: nowrap;
+    overflow: hidden;
 }
 .uk-previewer-toolbar button{
     color:#fff;
@@ -153,4 +155,15 @@
     font-family: monospace,serif,cursive;
     color: #fff;
     font-weight: bold;
+}
+@media screen and (max-width:640px){
+    .uk-previewer-mini-hide{
+        display: none;
+    }
+    .uk-previewer-video{
+        width: 100%;
+    }
+    .uk-previewer-text{
+        width:100%;
+    }
 }

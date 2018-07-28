@@ -1,14 +1,14 @@
 {
-  "name": "test",
+  "name": "uk-upload",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "a vue upload component",
+  "main": "./src/uk-upload/index.js",
   "scripts": {
     "dev": "cd ./build && webpack-dev-server --config webpack.config.dev.js",
     "build": "cd ./build && webpack --config webpack.config.prod.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",

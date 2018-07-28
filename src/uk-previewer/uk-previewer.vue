@@ -35,13 +35,13 @@
         <div class="uk-previewer-footer">
             <div>{{computedIndex}}/{{computedCount}}</div>
             <div class="uk-previewer-toolbar">
-                <button @click="rotate(-90)" title="向左旋转">
+                <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转">
                     <i class="iconfont icon-xuanzhuan1"></i>
                 </button>
-                <button @click="rotate(90)" title="向右旋转">
+                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="向右旋转">
                     <i class="iconfont icon-xuanzhuan"></i>
                 </button>
-                <button @click="setLocationCenter" title="居中">
+                <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中">
                     <i class="iconfont icon-juzhong"></i>
                 </button>
                 <button @click="scale(1,true)" title="原始大小">
