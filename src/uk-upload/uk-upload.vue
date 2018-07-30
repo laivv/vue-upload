@@ -16,7 +16,7 @@
                                     <img :src="file.thumbSrc" v-if="supportView || file.status==='success'" class="uk-upload-img" />
                                 </template>
                                 <template v-else>
-                                    <span class="iconfont" :class="{'icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}">
+                                    <span class="iconfont0" :class="{'icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}">
                                     </span>
                                 </template>
                             </div>
@@ -25,10 +25,10 @@
                                     <span class="uk-upload-progress-bar">{{file.progress}}%</span>
                                 </div>
                                 <span class="uk-upload-error" v-if="file.status==='error'">
-                                    <i class="iconfont icon-error"></i>
+                                    <i class="iconfont0 icon-error"></i>
                                 </span>
                                 <span class="uk-upload-retry" @click="reload(file)" title="重试">
-                                    <i class="iconfont icon-zhongfa"></i>
+                                    <i class="iconfont0 icon-iconziti38"></i>
                                 </span>
                             </div>
                             <div v-if="showFileName" class="uk-upload-file-name" :title="file.name">{{file.name}}</div>
@@ -51,7 +51,7 @@
                 <li class="uk-upload-list-item" v-for="file in fileList" :key="file.id">
                     <div class="uk-upload-list-name uk-upload-clearfix">
                         <span class="uk-upload-list-title" :class="{'uk-upload-list-error':file.status === 'error'}" @click="handleFileClick(file)">
-                            <span class="iconfont" :class="{'icon-tupian-copy':file.type==='image','icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}">
+                            <span class="iconfont0" :class="{'icon-tupian-copy':file.type==='image','icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}">
                             </span>
                             {{file.name}}
                         </span>
@@ -59,17 +59,17 @@
                             <span class="uk-upload-list-tip" v-if="file.status === 'pending'">{{file.progress}}%</span>
                             <template v-if="file.status === 'error'">
                                 <span class="uk-upload-list-retry" title="重试" @click="reload(file)">
-                                    <i class="iconfont icon-zhongfa"></i>
+                                    <i class="iconfont0 icon-iconziti38"></i>
                                 </span>
                                 <span class="uk-upload-list-tip uk-upload-list-error">
-                                    <i class="iconfont icon-iconsb"></i>
+                                    <i class="iconfont0 icon-iconsb"></i>
                                 </span>
                             </template>
                             <span class="uk-upload-list-tip" v-if="file.status === 'success'">
-                                <i class="iconfont icon-icon-check-solid"></i>
+                                <i class="iconfont0 icon-icon-check-solid"></i>
                             </span>
                             <span v-if="file.status === 'waiting'" class="uk-upload-list-tip uk-upload-list-wait">
-                                <i class="iconfont icon-waiting"></i>
+                                <i class="iconfont0 icon-waiting"></i>
                             </span>
                             <span class="uk-upload-list-remove" @click="handleFileRemove(file)" title="删除">×</span>
                         </span>

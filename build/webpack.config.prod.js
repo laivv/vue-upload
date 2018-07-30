@@ -9,6 +9,7 @@ module.exports = merge(base,{
     entry: {
         'uk-upload':path.join( basePath ,"./src/uk-upload/index.js"),
         'uk-previewer': path.join(basePath , "./src/uk-previewer/index.js"),
+        'uk-video-player': path.join(basePath , "./src/uk-video-player/index.js")
     },
     plugins:[
         new htmlWebpackPlugin({

@@ -32,9 +32,19 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
-.uk-previewer-unsupport{
+.uk-previewer-text-center{
+    text-align: center;
+}
+.uk-previewer-warn-text{
+    padding-top: 10px;
     color: #fff;
     font-weight: bold;
+}
+.uk-previewer-unsupport{
+    color: #fff;
+}
+.uk-previewer-unsupport .iconfont1{
+    font-size: 40px;
 }
 .uk-previewer-video{
     height: 80%;
@@ -74,13 +84,10 @@
     transform: rotate(0deg);
     animation: rotate 1s linear infinite;
 }
-.uk-previewer-loading .iconfont
+.uk-previewer-loading .iconfont1,
+.uk-previewer-error .iconfont1
 {
     font-size: 40px;
-}
-.uk-previewer-error .iconfont
-{
-    font-size: 100px;
 }
 .uk-previewer-prev-btn,
 .uk-previewer-next-btn{
@@ -119,13 +126,13 @@
     padding: 0 15px;
     cursor: pointer;
 }
-.uk-previewer-toolbar button .iconfont{
+.uk-previewer-toolbar button .iconfont1{
     font-size: 18px;
 }
-.uk-previewer-toolbar button .iconfont.icon-juzhong{
+.uk-previewer-toolbar button .iconfont1.icon-juzhong{
     font-size: 16px;
 }
-.uk-previewer-toolbar button:hover .iconfont{
+.uk-previewer-toolbar button:hover .iconfont1{
     color: #fff;
     text-shadow: 0px 0px 3px #fff;
 }

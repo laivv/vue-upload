@@ -1,6 +1,7 @@
    @import 'font/iconfont.css';
    .video-player{
        background: #000;
+       overflow: hidden;
    }
    .video-player.video-player-toolbar-show .video-player-toolbar{
             transform: translateY(0%);
@@ -35,6 +36,7 @@
             left: 0;
             transform: translateY(100%);
             transition: all 0.5s ;
+            min-width: 240px;
         }
         .video-player-fullscreen .video-player-toolbar{
             /* background: #000; */

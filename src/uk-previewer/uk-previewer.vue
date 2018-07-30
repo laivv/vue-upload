@@ -14,10 +14,11 @@
                     </div>
                 </template>
                 <div v-show="loadState === 'pending'" class="uk-previewer-loading">
-                    <i class="iconfont icon-loading"></i>
+                    <i class="iconfont1 icon-loading"></i>
                 </div>
-                <div v-show="loadState === 'error'" class="uk-previewer-error">
-                    <i class="iconfont icon-loading-error"></i>
+                <div v-show="loadState === 'error'" class="uk-previewer-error uk-previewer-text-center">
+                    <div><i class="iconfont1 icon-tupianjiazaishibai03"></i></div>
+                    <div class="uk-previewer-warn-text">文件加载失败</div>
                 </div>
             </template>
             <template v-if="['video','audio'].indexOf(fileType) > -1">
@@ -27,7 +28,10 @@
             </template>
         </template>
         <template v-else>
-            <span class="uk-previewer-center uk-previewer-unsupport">此文件不支持预览</span>
+            <span class="uk-previewer-center uk-previewer-text-center uk-previewer-unsupport">
+              <div><i class="iconfont1 icon-expressionfailure"></i></div>
+              <div class="uk-previewer-warn-text">无法预览此文件</div>
+            </span>
         </template>
         <div class="uk-previewer-close-btn" @click="closePreviewer">×</div>
         <div class="uk-previewer-prev-btn" @click="prevFile">&lt;</div>
@@ -36,28 +40,28 @@
             <div>{{computedIndex}}/{{computedCount}}</div>
             <div class="uk-previewer-toolbar">
                 <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转">
-                    <i class="iconfont icon-xuanzhuan1"></i>
+                    <i class="iconfont1 icon-xuanzhuan1"></i>
                 </button>
                 <button class="uk-previewer-mini-hide" @click="rotate(90)" title="向右旋转">
-                    <i class="iconfont icon-xuanzhuan"></i>
+                    <i class="iconfont1 icon-xuanzhuan"></i>
                 </button>
                 <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中">
-                    <i class="iconfont icon-juzhong"></i>
+                    <i class="iconfont1 icon-juzhong"></i>
                 </button>
                 <button @click="scale(1,true)" title="原始大小">
-                    <i class="iconfont icon-yuanshidaxiao"></i>
+                    <i class="iconfont1 icon-yuanshidaxiao"></i>
                 </button>
                 <button @click="scale(0.2)" title="放大">
-                    <i class="iconfont icon-fangda"></i>
+                    <i class="iconfont1 icon-fangda"></i>
                 </button>
                 <button @click="scale(-0.2)" title="缩小">
-                    <i class="iconfont icon-suoxiao"></i>
+                    <i class="iconfont1 icon-suoxiao"></i>
                 </button>
                 <button @click="prevFile" title="上一个">
-                    <i class="iconfont icon-jiantou"></i>
+                    <i class="iconfont1 icon-jiantou"></i>
                 </button>
                 <button @click="nextFile" title="下一个">
-                    <i class="iconfont icon-endarrow"></i>
+                    <i class="iconfont1 icon-endarrow"></i>
                 </button>
             </div>
         </div>

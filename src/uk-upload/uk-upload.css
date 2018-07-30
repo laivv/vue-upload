@@ -81,15 +81,15 @@
     color: #fff;
     line-height: 40px;
 }
-.uk-upload-error .iconfont{
+.uk-upload-error .iconfont0{
     color:red;
     font-size: 20px;
 }
-.uk-upload-img-wrap .iconfont{
+.uk-upload-img-wrap .iconfont0{
     font-size: 60px;
     color:#888;
 }
-.uk-upload-img-wrap .iconfont,
+.uk-upload-img-wrap .iconfont0,
 .uk-upload-error,
 .uk-upload-retry{
     position: absolute;
@@ -102,8 +102,8 @@
     cursor: pointer;
     color: #24cbc1;
 }
-.uk-upload-retry .iconfont{
-    font-size: 20px;
+.uk-upload-retry .iconfont0{
+    font-size: 30px;
 }
 .uk-upload-mask-error:hover .uk-upload-retry{
     display: inline-block;
@@ -205,12 +205,16 @@
 .uk-upload-list-error{
     color:red;
 }
-.uk-upload-list-wait .iconfont{
+.uk-upload-list-wait .iconfont0{
     color:#aaa;
 }
 .uk-upload-list-retry{
     display: none;
     cursor: pointer;
+}
+.uk-upload-list-retry .iconfont0
+{
+    color: #888;
 }
 .uk-upload-list-remove{
     display: none;
