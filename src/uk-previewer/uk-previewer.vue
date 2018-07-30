@@ -38,23 +38,23 @@
         <div class="uk-previewer-next-btn" @click="nextFile">&gt;</div>
         <div class="uk-previewer-footer">
             <div>{{computedIndex}}/{{computedCount}}</div>
-            <div class="uk-previewer-toolbar">
-                <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转">
+            <div class="uk-previewer-toolbar uk-previewer-clearfix">
+                <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-xuanzhuan1"></i>
                 </button>
-                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="向右旋转">
+                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="向右旋转" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-xuanzhuan"></i>
                 </button>
-                <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中">
+                <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-juzhong"></i>
                 </button>
-                <button @click="scale(1,true)" title="原始大小">
+                <button @click="scale(1,true)" title="原始大小" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-yuanshidaxiao"></i>
                 </button>
-                <button @click="scale(0.2)" title="放大">
+                <button @click="scale(0.2)" title="放大" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-fangda"></i>
                 </button>
-                <button @click="scale(-0.2)" title="缩小">
+                <button @click="scale(-0.2)" title="缩小" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-suoxiao"></i>
                 </button>
                 <button @click="prevFile" title="上一个">
@@ -63,6 +63,9 @@
                 <button @click="nextFile" title="下一个">
                     <i class="iconfont1 icon-endarrow"></i>
                 </button>
+                <a @click="downLoad($event)" :href="fileSrc" :download="file.name" target="_blank" title="下载" class="uk-previewer-right">
+                    <i class="iconfont1 icon-xiazai5"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -87,7 +90,8 @@ export default {
       default() {
         return 0;
       }
-    }
+    },
+    onFileDownload:Function
   },
   components: {
     UkVideoPlayer,
@@ -97,6 +101,7 @@ export default {
     return {
       _index: 0,
       _visible: false,
+      file:'',
       fileSrc: "",
       fileId: "",
       fileType: "image",
@@ -237,6 +242,16 @@ export default {
     nextFile() {
       this.swicthFile(1);
     },
+    downLoad:function(e){
+      let next = true;
+      if(this.onFileDownload){
+         next = this.onFileDownload(this.file);
+         next = next === undefined ? true : next;
+      }
+      if(!next){
+        e.preventDefault();
+      }
+    },
     init() {
       this.$nextTick(() => {
         document.addEventListener("mousewheel", e => {
@@ -261,6 +276,7 @@ export default {
       }
       let file = this.fileList[index];
       if (file) {
+        this.file = file;
         this._index = index;
         this.fileId = file.id;
         this.fileSrc = file.src;

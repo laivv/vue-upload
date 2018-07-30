@@ -10,6 +10,7 @@
         <button @click="getErrorList">获取上传失败的文件列表</button>
         <button @click="getUploadingList">获取上传中的文件列表</button>
         <button @click="switchListType">切换列表类型</button>
+        <button @click="getOringinalList">获取源始列表</button>
     </div>
 </template>
 <script>
@@ -84,7 +85,11 @@ export default {
     },
     switchListType: function() {
       this.listType = this.listType == "card" ? "text" : "card";
+    },
+    getOringinalList:function(){
+      console.log(this.fileList);
     }
   }
+
 };
 </script>

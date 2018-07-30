@@ -130,6 +130,9 @@ export default {
       default: true
     },
     beforeFileAdd: Function,
+    onFileSuccess:Function,
+    onFileError:Function,
+    onUploadComplete:Function,
     onFileClick: Function,
     onFileRemove: Function,
     showFileName: {
@@ -362,7 +365,7 @@ export default {
       return this.getFileListByStatus(["error"]);
     },
     getUploadStatus() {
-      return this.getUploadingFileList().length ? "uploading" : "complete";
+      return !this.getUploadingFileList().length;
     },
     createId: (function() {
       let id = 0;
@@ -416,7 +419,11 @@ export default {
         isRemove = isRemove === undefined ? true : isRemove;
       }
       if (isRemove) {
+        let isComplete = this.getUploadStatus();
         this.fileList.splice(this.fileList.indexOf(file), 1);
+        if(!isComplete && this.getUploadStatus() && this.onUploadComplete){
+            this.onUploadComplete();
+        }
       }
     },
     getFileExt(file) {
@@ -466,9 +473,17 @@ export default {
           file.status = "success";
           file.progress = 100;
           file.src = this.domain + response.key;
+          this.onFileSuccess && this.onFileSuccess(file);
+          if(this.getUploadStatus() && this.onUploadComplete){
+            this.onUploadComplete();
+          }
         })
         .catch(file => {
           file.status = "error";
+          this.onFileError && this.onFileError(file);
+          if(this.getUploadStatus() && this.onUploadComplete){
+            this.onUploadComplete();
+          }
         });
     },
     onStart(file) {
