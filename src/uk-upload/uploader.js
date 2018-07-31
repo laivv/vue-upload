@@ -79,6 +79,7 @@
         },
         setDataType(type) {
             this._dataType = type.trim().toString();
+            return this;
         },
         start(fn) {
             this._start = fn;
