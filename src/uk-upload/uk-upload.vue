@@ -192,10 +192,13 @@ export default {
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
           let data = xhr.responseText;
+          let success = true;
           try {
             data = JSON.parse(xhr.responseText);
-          } catch (e) {}
-          if (xhr.status == 200 || xhr.status == 304) {
+          } catch (e) {
+            success = false;
+          }
+          if (success && (xhr.status == 200 || xhr.status == 304)) {
             options.success && options.success(data);
             options.complete && options.complete(true, data);
           } else {
@@ -206,7 +209,7 @@ export default {
       };
       xhr.send(null);
     },
-    getUploadToken(index) {
+    getUploadToken(index,url) {
       let _self = this;
       if (index === undefined) {
         index = 0;
@@ -214,18 +217,18 @@ export default {
       if (
         !this.tokenUrl ||
         !this.tokenUrl.length ||
-        index >= this.tokenUrl.length ||
+        index > this.tokenUrl.length - 1 ||
         !this.tokenUrl[index]
       ) {
         return;
       }
       _self.request({
-        url: this.tokenUrl[index],
+        url: url || this.tokenUrl[index],
         complete(success, res) {
+          let url = _self.tokenUrl[index + 1];
           if (success) {
-            let url = _self.tokenUrl[index + 1];
             for (let key in res) {
-              if (res.hasOwnProperty[key]) {
+              if (res.hasOwnProperty(key)) {
                 if (new RegExp("token", "i").test(key)) {
                   _self.token = res[key];
                 }
@@ -236,7 +239,7 @@ export default {
                   _self.prefix = res[key];
                 }
                 if (url) {
-                  let exp = new RegExp("{s*" + key + "s*}", "ig");
+                  let exp = new RegExp("{\s*" + key + "\s*}", "ig");
                   url = url.replace(exp, res[key]);
                 }
               }
@@ -244,10 +247,10 @@ export default {
           }
           if (!_self.token || !success) {
             index = index + 1;
-            if (index >= _self.tokenUrl.length) {
+            if (index > _self.tokenUrl.length - 1) {
               console.error("获取上传token失败！");
             } else {
-              _self.getUploadToken(index);
+              _self.getUploadToken(index,url);
             }
           }
         }

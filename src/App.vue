@@ -1,6 +1,6 @@
 <template>
     <div id="app" class="app">
-        <uk-upload ref="upload" v-model="fileList" :token-url="['111','222']" :list-type="listType" :multiple="true" :enable-upload="true"
+        <uk-upload ref="upload" v-model="fileList" :token-url="['http://op-local.uoko.com/api/qiniu/getconfig?prefixType=2','http://op-local.uoko.com/HouseImages/GetQiniuToken?bucket={bucket}']" :list-type="listType" :multiple="true" :enable-upload="true"
             :max-file-count="5" :show-file-name="true" :preview-mode="false" :show-file-list="true" :max-file-size="0" :extensions="[]"
             :before-file-add="beforeFileAdd" :on-file-remove="onFileRemove" :on-file-click="onFileClick" thumb-query="?imgview/w/100/height/50">
         </uk-upload>
