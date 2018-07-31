@@ -22,7 +22,7 @@
             for (let key in options) {
                 if (options.hasOwnProperty(key)) {
                     let value = options[key];
-                    if (value instanceof File || (value.rawFile && (value.rawFile instanceof File))) {
+                    if (value !== undefined && (value instanceof File || (value.rawFile && (value.rawFile instanceof File)))) {
                         this._file = value;
                         this._formData.append(key, (value instanceof File) ? value : value.rawFile);
                     } else {

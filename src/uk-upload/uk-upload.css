@@ -80,6 +80,7 @@
     text-align: center;
     color: #fff;
     line-height: 40px;
+    font-weight: bold;
 }
 .uk-upload-error .iconfont0{
     color:red;

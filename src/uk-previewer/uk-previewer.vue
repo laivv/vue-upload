@@ -85,13 +85,13 @@ export default {
       type: Boolean,
       default: false
     },
-    index: {
+    current: {
       type: Number,
       default() {
         return 0;
       }
     },
-    onFileDownload:Function
+    onFileDownload: Function
   },
   components: {
     UkVideoPlayer,
@@ -101,7 +101,7 @@ export default {
     return {
       _index: 0,
       _visible: false,
-      file:'',
+      file: "",
       fileSrc: "",
       fileId: "",
       fileType: "image",
@@ -242,13 +242,13 @@ export default {
     nextFile() {
       this.swicthFile(1);
     },
-    downLoad:function(e){
+    downLoad: function(e) {
       let next = true;
-      if(this.onFileDownload){
-         next = this.onFileDownload(this.file);
-         next = next === undefined ? true : next;
+      if (this.onFileDownload) {
+        next = this.onFileDownload(this.file);
+        next = next === undefined ? true : next;
       }
-      if(!next){
+      if (!next) {
         e.preventDefault();
       }
     },
@@ -281,7 +281,7 @@ export default {
         this.fileId = file.id;
         this.fileSrc = file.src;
         this.fileType = file.type;
-        this.$emit("update:index", this._index);
+        this.$emit("update:current", this.fileId);
       }
     },
     closePreviewer() {
@@ -327,7 +327,15 @@ export default {
     }
   },
   watch: {
-    index(index) {
+    current(id) {
+      let index = 0;
+      this.fileList.every((file, i) => {
+        if (file.id === id) {
+          index = i;
+          return false;
+        }
+        return true;
+      });
       this.setCurrentIndex(index);
     },
     fileList() {

@@ -80,7 +80,7 @@
                 </li>
             </ul>
         </template>
-        <uk-previewer :file-list="fileList" :visible.sync="showPreviewDialog" :index.sync="index"></uk-previewer>
+        <uk-previewer :file-list="fileList" :visible.sync="showPreviewDialog" :current.sync="fileId"></uk-previewer>
     </div>
 </template>
 <script>
@@ -130,9 +130,9 @@ export default {
       default: true
     },
     beforeFileAdd: Function,
-    onFileSuccess:Function,
-    onFileError:Function,
-    onUploadComplete:Function,
+    onFileSuccess: Function,
+    onFileError: Function,
+    onUploadComplete: Function,
     onFileClick: Function,
     onFileRemove: Function,
     showFileName: {
@@ -155,12 +155,10 @@ export default {
     return {
       supportView: FileReader && new FileReader().readAsDataURL,
       fileList: [],
-      token: "",
-      domain: "",
-      prefix: "",
+      options: {}, //token相关数据
       showPreviewDialog: false,
-      index: 0,
-      _isQiniu:true
+      fileId: 0,
+      _isQiniu: true
     };
   },
   computed: {
@@ -173,7 +171,7 @@ export default {
   },
   created() {
     this.fileList = this.value;
-    this._isQiniu = /\.qiniu\./ig.test(this.url);
+    this._isQiniu = /\.qiniu\./gi.test(this.url);
     this.propFix();
     this.getUploadToken();
   },
@@ -211,7 +209,7 @@ export default {
       };
       xhr.send(null);
     },
-    getUploadToken(index,url) {
+    getUploadToken(index, url) {
       let _self = this;
       if (index === undefined) {
         index = 0;
@@ -232,28 +230,33 @@ export default {
           if (success) {
             for (let key in res) {
               if (res.hasOwnProperty(key)) {
-                if (new RegExp("token", "i").test(key)) {
-                  _self.token = res[key];
+                if (_self._isQiniu) {
+                  if (new RegExp("token", "i").test(key)) {
+                    _self.$set(_self.options, "token", res[key]);
+                  }
+                  if (key.toLowerCase() === "domain") {
+                    _self.$set(_self.options, "domain", res[key]);
+                  }
+                  if (key.toLowerCase() === "prefix") {
+                    _self.$set(_self.options, "prefix", res[key]);
+                  }
+                } else {
+                  _self.$set(_self.options, key, res[key]);
                 }
-                if (key.toLowerCase() === "domain") {
-                  _self.domain = res[key];
-                }
-                if (key.toLowerCase() === "prefix") {
-                  _self.prefix = res[key];
-                }
+
                 if (url) {
-                  let exp = new RegExp("{\s*" + key + "\s*}", "ig");
+                  let exp = new RegExp("{s*" + key + "s*}", "ig");
                   url = url.replace(exp, res[key]);
                 }
               }
             }
           }
-          if (!_self.token || !success) {
+          if ((_self._isQiniu && !_self.options.token) || !success) {
             index = index + 1;
             if (index > _self.tokenUrl.length - 1) {
               console.error("获取上传token失败！");
             } else {
-              _self.getUploadToken(index,url);
+              _self.getUploadToken(index, url);
             }
           }
         }
@@ -263,7 +266,7 @@ export default {
       let _self = this;
       let ext = file.ext ? "." + file.ext : "";
       let key =
-        (_self.prefix ? _self.prefix : "A") +
+        (_self.options.prefix ? _self.options.prefix : "A") +
         "." +
         _self.creareGuid(8, 16) +
         ext;
@@ -414,7 +417,7 @@ export default {
         next = next === undefined ? true : next;
       }
       if (next && file.status === "success") {
-        this.index = this.fileList.indexOf(file);
+        this.fileId = file.id;
         this.showPreviewDialog = true;
       }
     },
@@ -427,8 +430,8 @@ export default {
       if (isRemove) {
         let isComplete = this.getUploadStatus();
         this.fileList.splice(this.fileList.indexOf(file), 1);
-        if(!isComplete && this.getUploadStatus() && this.onUploadComplete){
-            this.onUploadComplete();
+        if (!isComplete && this.getUploadStatus() && this.onUploadComplete) {
+          this.onUploadComplete();
         }
       }
     },
@@ -463,15 +466,21 @@ export default {
     },
     upload(file) {
       let options = {
-        file: file,
+        file: file
       };
-      if(this._isQiniu) {
+      if (this._isQiniu) {
         options.key = this.getKey(file);
-        options.token = this.token;
+        options.token = this.options.token;
+      } else {
+        for (let key in this.options) {
+          if (this.options.hasOwnProperty(key)) {
+            options[key] = this.options[key];
+          }
+        }
       }
       new Uploader(this.url)
         .upload(options)
-        .setDataType('json')
+        .setDataType("json")
         .start(file => {
           file.status = "pending";
         })
@@ -481,16 +490,26 @@ export default {
         .then((response, file) => {
           file.status = "success";
           file.progress = 100;
-          file.src = this.domain + response.key;
-          this.onFileSuccess && this.onFileSuccess(response,file);
-          if(this.getUploadStatus() && this.onUploadComplete){
+          let src = undefined;
+          if (this.onFileSuccess) {
+            let param = Object.keys(this.options).length
+              ? this.options
+              : undefined;
+            src = this.onFileSuccess(file, response, param);
+          }
+          src =
+            src === undefined
+              ? this._isQiniu ? this.options.domain + response.key : response
+              : src;
+          file.src = src;
+          if (this.getUploadStatus() && this.onUploadComplete) {
             this.onUploadComplete();
           }
         })
         .catch(file => {
           file.status = "error";
           this.onFileError && this.onFileError(file);
-          if(this.getUploadStatus() && this.onUploadComplete){
+          if (this.getUploadStatus() && this.onUploadComplete) {
             this.onUploadComplete();
           }
         });
@@ -538,6 +557,11 @@ export default {
           this.upload(file);
         }
       });
+    }
+  },
+  watch: {
+    previewMode() {
+      this.getUploadToken();
     }
   }
 };
