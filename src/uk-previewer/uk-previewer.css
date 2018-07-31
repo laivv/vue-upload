@@ -18,6 +18,11 @@
     user-select: none;
     cursor: move;
 }
+.uk-previewer-image
+{
+    max-width: initial!important;
+    max-height: initial!important;
+}
 @keyframes rotate{
     form{
         transform: rotate(0deg);

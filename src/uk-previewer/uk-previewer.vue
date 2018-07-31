@@ -5,7 +5,7 @@
                 <template v-if="fileType === 'image'">
                 <div class="uk-previewer-image-wrapper" v-show="loadState === 'success'" :style="{transform:transform,left:left,top:top}"
                     ref="imageBox" @mousedown="mousedown($event)" @mousemove="mousemove">
-                    <img :src="fileSrc" @load="handleFileLoad($event,'success',true)" @dragstart="handleImageDragStart($event)" @error="handleFileLoad($event,'error',true)">
+                    <img class="uk-previewer-image" :src="fileSrc" @load="handleFileLoad($event,'success',true)" @dragstart="handleImageDragStart($event)" @error="handleFileLoad($event,'error',true)">
                 </div>
                 </template>
                  <template v-if="fileType === 'text'">

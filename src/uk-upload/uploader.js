@@ -68,7 +68,7 @@
             this._xhr.upload.onprogress = (e) => {
                 if (_self._progress) {
                     let percent = e.total ? (e.loaded / e.total * 100) : 0;
-                    _self._progress(_self._file, percent);
+                    _self._progress(_self._file, parseInt(percent));
                 }
             };
             setTimeout(() => {
