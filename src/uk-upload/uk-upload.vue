@@ -90,7 +90,7 @@ export default {
   props: {
     url: {
       type: String,
-      default: "http://www.qiniu.com"
+      default: "http://up.qiniu.com"
     },
     value: {
       type: Array,
@@ -159,7 +159,8 @@ export default {
       domain: "",
       prefix: "",
       showPreviewDialog: false,
-      index: 0
+      index: 0,
+      _isQiniu:true
     };
   },
   computed: {
@@ -172,6 +173,7 @@ export default {
   },
   created() {
     this.fileList = this.value;
+    this._isQiniu = /\.qiniu\./ig.test(this.url);
     this.propFix();
     this.getUploadToken();
   },
@@ -198,7 +200,7 @@ export default {
           } catch (e) {
             success = false;
           }
-          if (success && (xhr.status == 200 || xhr.status == 304)) {
+          if (success && (xhr.status === 200 || xhr.status === 304)) {
             options.success && options.success(data);
             options.complete && options.complete(true, data);
           } else {
@@ -215,6 +217,7 @@ export default {
         index = 0;
       }
       if (
+        this.previewMode ||
         !this.tokenUrl ||
         !this.tokenUrl.length ||
         index > this.tokenUrl.length - 1 ||
@@ -461,11 +464,14 @@ export default {
     upload(file) {
       let options = {
         file: file,
-        key: this.getKey(file),
-        token: this.token
       };
+      if(this._isQiniu) {
+        options.key = this.getKey(file);
+        options.token = this.token;
+      }
       new Uploader(this.url)
         .upload(options)
+        .setDataType('json')
         .start(file => {
           file.status = "pending";
         })
@@ -476,7 +482,7 @@ export default {
           file.status = "success";
           file.progress = 100;
           file.src = this.domain + response.key;
-          this.onFileSuccess && this.onFileSuccess(file);
+          this.onFileSuccess && this.onFileSuccess(response,file);
           if(this.getUploadStatus() && this.onUploadComplete){
             this.onUploadComplete();
           }
