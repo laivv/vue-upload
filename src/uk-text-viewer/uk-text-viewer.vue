@@ -1,6 +1,6 @@
 <template>
     <div class="uk-text-viewer">
-        <div class="uk-text-viewer-text"> {{text}}</div>
+      <div class="uk-text-viewer-text" v-show="text"> {{text}}</div>
     </div>
 </template>
 <script>
@@ -10,7 +10,8 @@ export default {
   },
   data() {
     return {
-      text: ""
+      text: "",
+      originalData: ""
     };
   },
   mounted() {
@@ -20,6 +21,13 @@ export default {
     this.request(false);
   },
   methods: {
+    decoder(encode) {
+      try {
+        this.text = new TextDecoder(encode).decode(
+          new DataView(this.originalData)
+        );
+      } catch (e) {}
+    },
     request: (function() {
       let xhr = null;
       let start = function(flag) {
@@ -40,15 +48,9 @@ export default {
         xhr.responseType = "arraybuffer";
         xhr.onreadystatechange = function() {
           if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              try {
-                _self.text = new TextDecoder("gbk").decode(
-                  new DataView(xhr.response)
-                );
-              } catch (e) {
-                _self.text = xhr.responseText;
-              }
-              // console.log(xhr.responseText);
+            if (xhr.status === 200 || xhr.status === 304) {
+              _self.originalData = xhr.response;
+              _self.decoder("gbk");
               _self.$emit("load");
             } else {
               _self.$emit("error");
@@ -72,6 +74,7 @@ export default {
 .uk-text-viewer {
   width: 100%;
   height: 100%;
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto;
 }

@@ -9,7 +9,7 @@
             :enable-upload="true"
             :max-file-count="5" 
             :show-file-name="true" 
-            :preview-mode="false" 
+            :preview-mode="true" 
             :show-file-list="true" 
             :max-file-size="0" 
             :extensions="[]"
