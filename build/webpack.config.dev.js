@@ -6,6 +6,14 @@ const basePath = path.join (__dirname,'../');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = merge(base,{
+    module:{
+        rules:[
+            {
+                test: /\.css$/,
+                loader: ['style-loader', 'css-loader']
+            }
+        ]
+    },  
     devtool: 'cheap-module-eval-source-map',
     devServer: {
         contentBase: path.join(basePath, "./dist"),
