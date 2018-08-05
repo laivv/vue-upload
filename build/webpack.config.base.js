@@ -32,7 +32,18 @@ module.exports = {
            
             {
                 test: /\.(gif|png|jpg|woff|svg|eot|ttf)$/,
-                loader: ['url-loader']
+                use:[
+                    {
+                        loader:'url-loader',
+                        options:{
+                            limit:8192,
+                            name:'font/[name].[ext]',
+                            // outputPath:function(file){
+                            //  },
+                        }
+                    }
+                ],
+               // loader: ['url-loader']
             }
         ]
     },
