@@ -3,12 +3,9 @@ const webpack = require('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const basePath = path.join (__dirname,'../');
 module.exports = {
-    entry: {
-        vendor: ['vue'],
-        app:path.join( basePath, './src/main.js')
-    },
+   
     output: {
-        filename: "[name].min.js",
+        filename: "[name]/[name].min.js",
         path: path.join(basePath, "dist"),
         // library:"UkPreviewer"
     },

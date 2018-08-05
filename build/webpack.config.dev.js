@@ -6,6 +6,10 @@ const basePath = path.join (__dirname,'../');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = merge(base,{
+    entry: {
+        vendor: ['vue'],
+        app:path.join( basePath, './src/main.js')
+    },
     module:{
         rules:[
             {

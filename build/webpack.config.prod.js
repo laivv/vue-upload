@@ -6,12 +6,30 @@ const basePath = path.resolve (__dirname,'../');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const glob = require('glob');
+
+function getEntries(){
+    var files = glob.sync('../src/*/index.js');
+    debugger;
+    var newEntries = {};
+     files.forEach(function(file) {
+        var name = /.*\/(.+)\/index\.js$/.exec(file)[1];
+        newEntries[name] = path.join(__dirname,file);
+    });
+    debugger;
+    return newEntries;
+}
+getEntries();
 
 module.exports = merge(base,{
-    entry: {
-        'uk-upload':path.join( basePath ,"./src/uk-upload/index.js"),
-        'uk-previewer': path.join(basePath , "./src/uk-previewer/index.js"),
-        'uk-video-player': path.join(basePath , "./src/uk-video-player/index.js")
+    entry: getEntries(),
+    // entry: {
+    //     'uk-upload':path.join( basePath ,"./src/uk-upload/index.js"),
+    //     'uk-previewer': path.join(basePath , "./src/uk-previewer/index.js"),
+    //     'uk-video-player': path.join(basePath , "./src/uk-video-player/index.js")
+    // },
+    externals:{
+        vue:'Vue'
     },
     module:{
         rules:[
@@ -34,7 +52,7 @@ module.exports = merge(base,{
             chunksSortMode: 'dependency',
             isProd:true
         }),
-        new ExtractTextPlugin('[name].min.css'),
+        new ExtractTextPlugin('[name]/[name].min.css'),
         new OptimizeCssAssetsPlugin(),
     ]
 })
