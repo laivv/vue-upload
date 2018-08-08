@@ -110,7 +110,7 @@ export default {
       type: Number,
       default: 0
     },
-    extensions: {
+    acceptList: {
       type: Array,
       default() {
         return [];
@@ -454,7 +454,7 @@ export default {
       if (this.maxFileSize > 0 && file.size > this.maxFileSize) {
         res = false;
       }
-      if (this.extensions.length && this.extensions.indexOf(file.ext) === -1) {
+      if (this.acceptList.length && this.acceptList.indexOf(file.ext) === -1) {
         res = false;
       }
       return res;
