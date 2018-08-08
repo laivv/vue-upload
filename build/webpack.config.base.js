@@ -35,12 +35,12 @@ module.exports = {
                 use:[
                     {
                         loader:'url-loader',
-                        options:{
-                            limit:8192,
-                            name:'font/[name].[ext]',
-                            // outputPath:function(file){
-                            //  },
-                        }
+                        // options:{
+                        //     limit:8192,
+                        //     name:'font/[name].[ext]',
+                        //     // outputPath:function(file){
+                        //     //  },
+                        // }
                     }
                 ],
                // loader: ['url-loader']
