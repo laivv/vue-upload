@@ -7,7 +7,7 @@
         </div>
         <template v-if="listType === 'card'">
             <template v-if="showFileList">
-                <div class="uk-upload-item" v-for="file in fileList" :key="file.id">
+                <div class="uk-upload-item" v-for="file in value" :key="file.id">
                     <div class="uk-upload-item-wrap">
                         <div class="uk-upload-item-content">
                             <span class="uk-upload-item-remove" @click="handleFileRemove(file)" v-if="!previewMode">×</span>
@@ -48,7 +48,7 @@
         </template>
         <template v-else>
             <ul v-if="showFileList" class="uk-upload-list">
-                <li class="uk-upload-list-item" v-for="file in fileList" :key="file.id">
+                <li class="uk-upload-list-item" v-for="file in value" :key="file.id">
                     <div class="uk-upload-list-name uk-upload-clearfix">
                         <span class="uk-upload-list-title" :class="{'uk-upload-list-error':file.status === 'error'}" @click="handleFileClick(file)">
                             <span class="iconfont0" :class="{'icon-tupian-copy':file.type==='image','icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}">
@@ -80,7 +80,7 @@
                 </li>
             </ul>
         </template>
-        <uk-previewer :file-list="fileList" :visible.sync="showPreviewDialog" :current.sync="fileId"></uk-previewer>
+        <uk-previewer :file-list="value" :visible.sync="showPreviewDialog" :current.sync="fileId"></uk-previewer>
     </div>
 </template>
 <script>
@@ -154,7 +154,6 @@ export default {
   data() {
     return {
       supportView: FileReader && new FileReader().readAsDataURL,
-      fileList: [],
       options: {}, //token相关数据
       showPreviewDialog: false,
       fileId: 0,
@@ -166,11 +165,10 @@ export default {
       if (this.maxFileCount <= 0) {
         return false;
       }
-      return this.fileList.length >= this.maxFileCount;
+      return this.value.length >= this.maxFileCount;
     }
   },
   created() {
-    this.fileList = this.value;
     this._isQiniu = /\.qiniu\./gi.test(this.url);
     this.propFix();
     this.getUploadToken();
@@ -273,7 +271,7 @@ export default {
       return key;
     },
     propFix() {
-      this.fileList.forEach((file, index) => {
+      this.value.forEach((file, index) => {
         if (typeof file === "string") {
           this.value[index] = { src: file };
           file = this.value[index];
@@ -342,7 +340,7 @@ export default {
     },
     getFileListByStatus(status) {
       let files = [];
-      this.fileList.forEach(file => {
+      this.value.forEach(file => {
         if (status.indexOf(file.status) > -1) {
           files.push({
             name: file.name,
@@ -355,7 +353,7 @@ export default {
       return files;
     },
     getFileList() {
-      return this.fileList.map(file => {
+      return this.value.map(file => {
         return {
           name: file.name,
           ext: file.ext,
@@ -429,7 +427,7 @@ export default {
       }
       if (isRemove) {
         let isComplete = this.getUploadStatus();
-        this.fileList.splice(this.fileList.indexOf(file), 1);
+        this.value.splice(this.value.indexOf(file), 1);
         if (!isComplete && this.getUploadStatus() && this.onUploadComplete) {
           this.onUploadComplete();
         }
@@ -448,7 +446,7 @@ export default {
     },
     validateFile(file) {
       let res = true;
-      if (this.maxFileCount > 0 && this.fileList.length >= this.maxFileCount) {
+      if (this.maxFileCount > 0 && this.value.length >= this.maxFileCount) {
         res = false;
       }
       if (this.maxFileSize > 0 && file.size > this.maxFileSize) {
@@ -515,7 +513,7 @@ export default {
         });
     },
     onStart(file) {
-      this.fileList.push(file);
+      this.value.push(file);
       if (this.getFileType(file) === "image") {
         if (this.supportView) {
           let reader = new FileReader();
@@ -560,6 +558,9 @@ export default {
     }
   },
   watch: {
+    value(){
+      this.propFix();
+    },
     previewMode() {
       this.getUploadToken();
     }
