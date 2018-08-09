@@ -1,14 +1,15 @@
 <template>
     <div class="uk-previewer" v-show="visible">
+      <template v-if="fileList.length">
         <template v-if="['image','video','audio','text'].indexOf(fileType) > -1">
             <template v-if="['image','text'].indexOf(fileType) > -1">
-                <template v-if="fileType === 'image'">
+                <template v-if="fileType === 'image' && visible">
                 <div class="uk-previewer-image-wrapper" v-show="loadState === 'success'" :style="{transform:transform,left:left,top:top}"
                     ref="imageBox" @mousedown="mousedown($event)" @mousemove="mousemove">
                     <img class="uk-previewer-image" :src="fileSrc" @load="handleFileLoad($event,'success',true)" @dragstart="handleImageDragStart($event)" @error="handleFileLoad($event,'error',true)">
                 </div>
                 </template>
-                 <template v-if="fileType === 'text'">
+                 <template v-if="fileType === 'text' && visible">
                     <div class="uk-previewer-center uk-previewer-text" v-show="loadState === 'success'">
                         <uk-text-viewer :src="fileSrc" @load="handleFileLoad($event,'success',false)" @error="handleFileLoad($event,'error',false)"></uk-text-viewer>
                     </div>
@@ -33,40 +34,46 @@
               <div class="uk-previewer-warn-text">无法预览此文件</div>
             </span>
         </template>
+      </template>
+      <template v-else>
+          <span class="uk-previewer-center uk-previewer-text-center uk-previewer-unsupport">
+              <div class="uk-previewer-warn-text">没有可预览的文件</div>
+          </span>
+      </template>
         <div class="uk-previewer-close-btn" @click="closePreviewer">×</div>
         <div class="uk-previewer-prev-btn" @click="prevFile">&lt;</div>
         <div class="uk-previewer-next-btn" @click="nextFile">&gt;</div>
         <div class="uk-previewer-footer">
             <div v-if="showFileName" class="uk-previewer-file-name">{{file.name}}</div>
             <div class="uk-previewer-toolbar uk-previewer-clearfix">
+                <span class="uk-previewer-left uk-previewer-index">
+                    {{computedIndex}}/{{computedCount}}
+                  </span>
                 <!-- <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-xuanzhuan1"></i>
                 </button> -->
-                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="旋转" :disabled="fileType !== 'image'">
+                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="旋转" :disabled="fileType !== 'image' || !fileList.length">
                     <i class="iconfont1 icon-xuanzhuan"></i>
                 </button>
-                <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中" :disabled="fileType !== 'image'">
+                <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中" :disabled="fileType !== 'image' || !fileList.length">
                     <i class="iconfont1 icon-juzhong"></i>
                 </button>
-                <button @click="scale(1,true)" title="原始大小" :disabled="fileType !== 'image'">
+                <button @click="scale(1,true)" title="原始大小" :disabled="fileType !== 'image' || !fileList.length">
                     <i class="iconfont1 icon-yuanshidaxiao"></i>
                 </button>
-                <button @click="scale(0.2)" title="放大" :disabled="fileType !== 'image'">
+                <button @click="scale(0.2)" title="放大" :disabled="fileType !== 'image' || !fileList.length">
                     <i class="iconfont1 icon-fangda"></i>
                 </button>
-                <button @click="scale(-0.2)" title="缩小" :disabled="fileType !== 'image'">
+                <button @click="scale(-0.2)" title="缩小" :disabled="fileType !== 'image' || !fileList.length">
                     <i class="iconfont1 icon-suoxiao"></i>
                 </button>
-                <button @click="prevFile" title="上一个">
+                <button @click="prevFile" title="上一个" :disabled="!_index || !fileList.length">
                     <i class="iconfont1 icon-jiantou"></i>
                 </button>
-                <span class="uk-previewer-left uk-previewer-index">
-                  {{computedIndex}}/{{computedCount}}
-                </span>
-                <button @click="nextFile" title="下一个">
+                <button @click="nextFile" title="下一个" :disabled="_index >= fileList.length - 1 || !fileList.length">
                     <i class="iconfont1 icon-endarrow"></i>
                 </button>
-                <a @click="downLoad($event)" :href="fileSrc" :download="file.name" target="_blank" title="下载" class="uk-previewer-right">
+                <a @click="downLoad($event)" :href="fileSrc" :download="file.name" target="_blank" title="下载" class="uk-previewer-right" v-show="fileList.length">
                     <i class="iconfont1 icon-xiazai5"></i>
                 </a>
             </div>
@@ -218,7 +225,10 @@ export default {
       }
     },
     resetFileLoadState(src, status) {
-      this.fileState[this.fileId].loadState = "pending";
+      let state = this.fileState[this.fileId];
+      if(state.loadState !== 'success'){
+        state.loadState = "pending";
+      }
     },
     getIndex(n) {
       let index = this._index + n,
@@ -277,7 +287,7 @@ export default {
     },
     setCurrentIndex(n) {
       let index = n === undefined ? this.index : n,
-        maxIndex = this.fileList.length - 1;
+        maxIndex = this.fileList.length ? (this.fileList.length - 1) : 0;
       if (index > maxIndex) {
         index = maxIndex;
       }

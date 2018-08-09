@@ -159,14 +159,8 @@ export default {
       type: String,
       default: "card" //card or text
     },
-    previewVisible: {
-      type: Boolean,
-      default: false
-    },
-    previewIndex: {
-      type: Boolean,
-      default: 0
-    }
+    onPreviewClose: Function,
+    onPreviewSwitch: Function
   },
   components: {
     UkPreviewer
@@ -190,8 +184,6 @@ export default {
   },
   created() {
     this._isQiniu = /\.qiniu\./gi.test(this.url);
-    this.showPreviewDialog = this.previewVisible;
-    this.index = this.previewIndex;
     this.propFix();
     this.getUploadToken();
   },
@@ -425,13 +417,20 @@ export default {
       return uuid.join("");
     },
     handlePreviewerClose(){
-      this.$emit('update:previewVisible',false);
+      this.onPreviewClose && this.onPreviewClose();
     },
     handlePreviewerSwitch(index) {
-      this.$emit('update:previewIndex',index);
+      this.onPreviewSwitch && this.onPreviewSwitch(index);
     },
     openFileBrowser() {
       this.$refs.file.click();
+    },
+    openPreviewer(index) {
+      let maxIndex = this.value.length ? this.value.length - 1 : 0;
+      index = index > maxIndex ? maxIndex : index;
+      index = index < 0 ? 0 : index;
+      this.index = index;
+      this.showPreviewDialog = true;
     },
     handleFileClick(file) {
       let next = true;
@@ -442,8 +441,6 @@ export default {
       if (next && file.status === "success") {
         this.index = this.value.indexOf(file);
         this.showPreviewDialog = true;
-        this.$emit('update:previewVisible',true);
-        this.$emit('update:previewIndex',this.index);
       }
     },
     handleFileRemove(file) {
@@ -590,17 +587,7 @@ export default {
     },
     previewMode() {
       this.getUploadToken();
-    },
-    previewVisible(visible){
-      this.showPreviewDialog = visible;
-    },
-    previewIndex(index){
-      let maxIndex = this.value.length - 1;
-      index = index > maxIndex ? maxIndex : index;
-      index = index < 0 ? 0 : index;
-      this.index = index;
     }
-
   }
 };
 </script>
