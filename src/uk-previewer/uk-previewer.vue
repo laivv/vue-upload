@@ -37,12 +37,12 @@
         <div class="uk-previewer-prev-btn" @click="prevFile">&lt;</div>
         <div class="uk-previewer-next-btn" @click="nextFile">&gt;</div>
         <div class="uk-previewer-footer">
-            <div>{{computedIndex}}/{{computedCount}}</div>
+            <div v-if="showFileName" class="uk-previewer-file-name">{{file.name}}</div>
             <div class="uk-previewer-toolbar uk-previewer-clearfix">
-                <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转" :disabled="fileType !== 'image'">
+                <!-- <button class="uk-previewer-mini-hide" @click="rotate(-90)" title="向左旋转" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-xuanzhuan1"></i>
-                </button>
-                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="向右旋转" :disabled="fileType !== 'image'">
+                </button> -->
+                <button class="uk-previewer-mini-hide" @click="rotate(90)" title="旋转" :disabled="fileType !== 'image'">
                     <i class="iconfont1 icon-xuanzhuan"></i>
                 </button>
                 <button class="uk-previewer-mini-hide" @click="setLocationCenter" title="居中" :disabled="fileType !== 'image'">
@@ -60,6 +60,9 @@
                 <button @click="prevFile" title="上一个">
                     <i class="iconfont1 icon-jiantou"></i>
                 </button>
+                <span class="uk-previewer-left uk-previewer-index">
+                  {{computedIndex}}/{{computedCount}}
+                </span>
                 <button @click="nextFile" title="下一个">
                     <i class="iconfont1 icon-endarrow"></i>
                 </button>
@@ -85,12 +88,18 @@ export default {
       type: Boolean,
       default: false
     },
-    current: {
+    index: {
       type: Number,
       default() {
         return 0;
       }
     },
+    showFileName: {
+      type: Boolean,
+      default: false
+    },
+    onClose: Function,
+    onSwitch: Function,
     onFileDownload: Function
   },
   components: {
@@ -232,6 +241,7 @@ export default {
     swicthFile(n) {
       let index = this.getIndex(n);
       if (index !== this._index) {
+        this.onSwitch && this.onSwitch(index);
         this.resetFileLoadState();
         this.setCurrentIndex(index);
       }
@@ -281,11 +291,11 @@ export default {
         this.fileId = file.id;
         this.fileSrc = file.src;
         this.fileType = file.type;
-        this.$emit("update:current", this.fileId);
+        this.$emit("update:index", index);
       }
     },
     closePreviewer() {
-      // this.visible = false;
+      this.onClose && this.onClose();
       this.$emit("update:visible", false);
     }
   },
@@ -327,15 +337,12 @@ export default {
     }
   },
   watch: {
-    current(id) {
-      let index = 0;
-      this.fileList.every((file, i) => {
-        if (file.id === id) {
-          index = i;
-          return false;
-        }
-        return true;
-      });
+    visible(visible){
+      if(visible){
+        this.setCurrentIndex();
+      }
+    },
+    index(index) {
       this.setCurrentIndex(index);
     },
     fileList() {

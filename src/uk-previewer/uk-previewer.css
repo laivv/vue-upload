@@ -164,8 +164,18 @@
 .uk-previewer-next-btn{
     right: 0;
 }
+.uk-previewer-left{
+    float: left;
+}
 .uk-previewer-right{
     float: right;
+}
+.uk-previewer-file-name{
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+.uk-previewer-index{
+    padding-left: 15px;
 }
 .uk-previewer-clearfix::after{
     content: '';

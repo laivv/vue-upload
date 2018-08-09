@@ -80,7 +80,15 @@
                 </li>
             </ul>
         </template>
-        <uk-previewer :file-list="value" :visible.sync="showPreviewDialog" :current.sync="fileId"></uk-previewer>
+        <uk-previewer 
+          :file-list="value" 
+          :visible.sync="showPreviewDialog" 
+          :index.sync="index" 
+          :show-file-name="showPreviewFileName" 
+          :on-close="handlePreviewerClose"
+          :on-switch="handlePreviewerSwitch"
+          >
+        </uk-previewer>
     </div>
 </template>
 <script>
@@ -143,9 +151,21 @@ export default {
       type: Boolean,
       default: true
     },
+    showPreviewFileName: {
+      type: Boolean,
+      default: false
+    },
     listType: {
       type: String,
       default: "card" //card or text
+    },
+    previewVisible: {
+      type: Boolean,
+      default: false
+    },
+    previewIndex: {
+      type: Boolean,
+      default: 0
     }
   },
   components: {
@@ -156,7 +176,7 @@ export default {
       supportView: FileReader && new FileReader().readAsDataURL,
       options: {}, //token相关数据
       showPreviewDialog: false,
-      fileId: 0,
+      index: 0,
       _isQiniu: true
     };
   },
@@ -170,6 +190,8 @@ export default {
   },
   created() {
     this._isQiniu = /\.qiniu\./gi.test(this.url);
+    this.showPreviewDialog = this.previewVisible;
+    this.index = this.previewIndex;
     this.propFix();
     this.getUploadToken();
   },
@@ -402,10 +424,13 @@ export default {
       }
       return uuid.join("");
     },
+    handlePreviewerClose(){
+      this.$emit('update:previewVisible',false);
+    },
+    handlePreviewerSwitch(index) {
+      this.$emit('update:previewIndex',index);
+    },
     openFileBrowser() {
-      // if(!this.token){
-      //     return;
-      // }
       this.$refs.file.click();
     },
     handleFileClick(file) {
@@ -415,8 +440,10 @@ export default {
         next = next === undefined ? true : next;
       }
       if (next && file.status === "success") {
-        this.fileId = file.id;
+        this.index = this.value.indexOf(file);
         this.showPreviewDialog = true;
+        this.$emit('update:previewVisible',true);
+        this.$emit('update:previewIndex',this.index);
       }
     },
     handleFileRemove(file) {
@@ -563,7 +590,17 @@ export default {
     },
     previewMode() {
       this.getUploadToken();
+    },
+    previewVisible(visible){
+      this.showPreviewDialog = visible;
+    },
+    previewIndex(index){
+      let maxIndex = this.value.length - 1;
+      index = index > maxIndex ? maxIndex : index;
+      index = index < 0 ? 0 : index;
+      this.index = index;
     }
+
   }
 };
 </script>
