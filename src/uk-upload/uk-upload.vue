@@ -3,7 +3,9 @@
         <input v-if="multiple" multiple="multiple" ref='file' type="file" style="display:none;" @change="onFileChange">
         <input v-else ref='file' type="file" style="display:none;" @change="onFileChange">
         <div class="uk-upload-text" v-if="!previewMode && listType !== 'card'">
-            <button class="uk-upload-text-btn" @click="openFileBrowser" :disabled="!enableUpload || overMaxCount">上传文件</button>
+            <a @click="openFileBrowser" :disabled="!enableUpload || overMaxCount">
+              <slot><button class="uk-upload-text-btn" >上传文件</button></slot>
+            </a>
         </div>
         <template v-if="listType === 'card'">
             <template v-if="showFileList">
@@ -92,18 +94,18 @@
     </div>
 </template>
 <script>
-import UkPreviewer from "../uk-previewer/index.js";
-import Uploader from "./Uploader.js";
+import UkPreviewer from '../uk-previewer/index.js'
+import Uploader from './Uploader.js'
 export default {
   props: {
     url: {
       type: String,
-      default: "http://up.qiniu.com"
+      default: 'http://up.qiniu.com'
     },
     value: {
       type: Array,
       default() {
-        return [];
+        return []
       }
     },
     multiple: {
@@ -121,12 +123,15 @@ export default {
     acceptList: {
       type: Array,
       default() {
-        return [];
+        return []
       }
     },
     thumbQuery: {
       type: String,
-      default: ""
+      default: ''
+    },
+    tokenGetMethod: {
+      type: Function
     },
     tokenUrl: Array,
     previewMode: {
@@ -157,7 +162,7 @@ export default {
     },
     listType: {
       type: String,
-      default: "card" //card or text
+      default: 'card' //card or text
     },
     onPreviewClose: Function,
     onPreviewSwitch: Function
@@ -172,59 +177,70 @@ export default {
       showPreviewDialog: false,
       index: 0,
       _isQiniu: true
-    };
+    }
   },
   computed: {
     overMaxCount() {
       if (this.maxFileCount <= 0) {
-        return false;
+        return false
       }
-      return this.value.length >= this.maxFileCount;
+      return this.value.length >= this.maxFileCount
     }
   },
   created() {
-    this._isQiniu = /\.qiniu\./gi.test(this.url);
-    this.propFix();
-    this.getUploadToken();
+    this._isQiniu = /\.qiniu\./gi.test(this.url)
+    this.propFix()
+    this.getUploadToken()
   },
   methods: {
     request(options) {
       let params = options.data,
-        url = options.url;
-      if (params && typeof params === "object") {
+        url = options.url
+      if (params && typeof params === 'object') {
         for (let key in params) {
           if (params.hasOwnProperty[key]) {
-            url +=
-              (url.indexOf("?") > -1 ? "&" : "?") + key + "=" + params[key];
+            url += (url.indexOf('?') > -1 ? '&' : '?') + key + '=' + params[key]
           }
         }
       }
-      let xhr = new XMLHttpRequest();
-      xhr.open("GET", url, true);
+      let xhr = new XMLHttpRequest()
+      xhr.open('GET', url, true)
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
-          let data = xhr.responseText;
-          let success = true;
+          let data = xhr.responseText
+          let success = true
           try {
-            data = JSON.parse(xhr.responseText);
+            data = JSON.parse(xhr.responseText)
           } catch (e) {
-            success = false;
+            success = false
           }
           if (success && (xhr.status === 200 || xhr.status === 304)) {
-            options.success && options.success(data);
-            options.complete && options.complete(true, data);
+            options.success && options.success(data)
+            options.complete && options.complete(true, data)
           } else {
-            options.error && options.error(data);
-            options.complete && options.complete(false, data);
+            options.error && options.error(data)
+            options.complete && options.complete(false, data)
           }
         }
-      };
-      xhr.send(null);
+      }
+      xhr.send(null)
     },
     getUploadToken(index, url) {
-      let _self = this;
+      /* 如果传入了自定义token获取方法，直接使用自定义方法配置token和config */
+      if (this.tokenGetMethod) {
+        this.tokenGetMethod(data => {
+          if (!data) {
+            return
+          }
+          Object.keys(data).forEach(key => {
+            this.$set(this.options, key, data[key])
+          })
+        })
+        return
+      }
+      let _self = this
       if (index === undefined) {
-        index = 0;
+        index = 0
       }
       if (
         this.previewMode ||
@@ -233,127 +249,127 @@ export default {
         index > this.tokenUrl.length - 1 ||
         !this.tokenUrl[index]
       ) {
-        return;
+        return
       }
       _self.request({
         url: url || this.tokenUrl[index],
         complete(success, res) {
-          let url = _self.tokenUrl[index + 1];
+          let url = _self.tokenUrl[index + 1]
           if (success) {
             for (let key in res) {
               if (res.hasOwnProperty(key)) {
                 if (_self._isQiniu) {
-                  if (new RegExp("token", "i").test(key)) {
-                    _self.$set(_self.options, "token", res[key]);
+                  if (new RegExp('token', 'i').test(key)) {
+                    _self.$set(_self.options, 'token', res[key])
                   }
-                  if (key.toLowerCase() === "domain") {
-                    _self.$set(_self.options, "domain", res[key]);
+                  if (key.toLowerCase() === 'domain') {
+                    _self.$set(_self.options, 'domain', res[key])
                   }
-                  if (key.toLowerCase() === "prefix") {
-                    _self.$set(_self.options, "prefix", res[key]);
+                  if (key.toLowerCase() === 'prefix') {
+                    _self.$set(_self.options, 'prefix', res[key])
                   }
                 } else {
-                  _self.$set(_self.options, key, res[key]);
+                  _self.$set(_self.options, key, res[key])
                 }
 
                 if (url) {
-                  let exp = new RegExp("{s*" + key + "s*}", "ig");
-                  url = url.replace(exp, res[key]);
+                  let exp = new RegExp('{s*' + key + 's*}', 'ig')
+                  url = url.replace(exp, res[key])
                 }
               }
             }
           }
           if ((_self._isQiniu && !_self.options.token) || !success) {
-            index = index + 1;
+            index = index + 1
             if (index > _self.tokenUrl.length - 1) {
-              console.error("获取上传token失败！");
+              console.error('获取上传token失败！')
             } else {
-              _self.getUploadToken(index, url);
+              _self.getUploadToken(index, url)
             }
           }
         }
-      });
+      })
     },
     getKey(file) {
-      let _self = this;
-      let ext = file.ext ? "." + file.ext : "";
+      let _self = this
+      let ext = file.ext ? '.' + file.ext : ''
       let key =
-        (_self.options.prefix ? _self.options.prefix : "A") +
-        "." +
+        (_self.options.prefix ? _self.options.prefix : 'A') +
+        '.' +
         _self.creareGuid(8, 16) +
-        ext;
-      return key;
+        ext
+      return key
     },
     propFix() {
       this.value.forEach((file, index) => {
-        if (typeof file === "string") {
-          this.value[index] = { src: file };
-          file = this.value[index];
+        if (typeof file === 'string') {
+          this.value[index] = { src: file }
+          file = this.value[index]
         }
         if (file.id === undefined) {
-          file.id = this.createId();
+          file.id = this.createId()
         }
         if (file.name === undefined) {
           file.name = file.src
-            .split("/")
+            .split('/')
             .pop()
-            .trim();
+            .trim()
         }
         if (file.ext === undefined) {
-          file.ext = this.getFileExt(file.name);
+          file.ext = this.getFileExt(file.name)
         }
         if (file.size === undefined) {
-          file.size = "";
+          file.size = ''
         }
         if (file.rawFile === undefined) {
-          file.rawFile = null;
+          file.rawFile = null
         }
         if (file.progress === undefined) {
-          file.progress = 100;
+          file.progress = 100
         }
         if (file.status === undefined) {
-          file.status = "success";
+          file.status = 'success'
         }
         if (file.thumbSrc === undefined) {
-          file.thumbSrc = file.src + this.thumbQuery;
+          file.thumbSrc = file.src + this.thumbQuery
         }
         if (file.type === undefined) {
-          file.type = this.getFileType(file);
+          file.type = this.getFileType(file)
         }
-      });
+      })
     },
     getFileType(file) {
-      if (["jpg", "png", "gif", "bmp", "jpeg", "webp"].indexOf(file.ext) > -1) {
-        return "image";
+      if (['jpg', 'png', 'gif', 'bmp', 'jpeg', 'webp'].indexOf(file.ext) > -1) {
+        return 'image'
       }
-      if (["mp4", "avi", "rmvb", "mkv", "3gp"].indexOf(file.ext) > -1) {
-        return "video";
+      if (['mp4', 'avi', 'rmvb', 'mkv', '3gp'].indexOf(file.ext) > -1) {
+        return 'video'
       }
-      if (["rar", "zip", "7z", "cab"].indexOf(file.ext) > -1) {
-        return "rar";
+      if (['rar', 'zip', '7z', 'cab'].indexOf(file.ext) > -1) {
+        return 'rar'
       }
-      if (file.ext === "txt") {
-        return "text";
+      if (file.ext === 'txt') {
+        return 'text'
       }
       if (
         [
-          "mp3",
-          "ogg",
-          "m4a",
-          "wav",
-          "ape",
-          "flac",
-          "wma",
-          "aac",
-          "amr"
+          'mp3',
+          'ogg',
+          'm4a',
+          'wav',
+          'ape',
+          'flac',
+          'wma',
+          'aac',
+          'amr'
         ].indexOf(file.ext) > -1
       ) {
-        return "audio";
+        return 'audio'
       }
-      return "file";
+      return 'file'
     },
     getFileListByStatus(status) {
-      let files = [];
+      let files = []
       this.value.forEach(file => {
         if (status.indexOf(file.status) > -1) {
           files.push({
@@ -361,10 +377,10 @@ export default {
             ext: file.ext,
             src: file.src,
             status: file.status
-          });
+          })
         }
-      });
-      return files;
+      })
+      return files
     },
     getFileList() {
       return this.value.map(file => {
@@ -373,221 +389,221 @@ export default {
           ext: file.ext,
           src: file.src,
           status: file.status
-        };
-      });
+        }
+      })
     },
     getSuccessFileList() {
-      return this.getFileListByStatus(["success"]);
+      return this.getFileListByStatus(['success'])
     },
     getUploadingFileList() {
-      return this.getFileListByStatus(["pending", "waiting"]);
+      return this.getFileListByStatus(['pending', 'waiting'])
     },
     getErrorFileList() {
-      return this.getFileListByStatus(["error"]);
+      return this.getFileListByStatus(['error'])
     },
     getUploadStatus() {
-      return !this.getUploadingFileList().length;
+      return !this.getUploadingFileList().length
     },
     createId: (function() {
-      let id = 0;
+      let id = 0
       return function() {
-        return ++id;
-      };
+        return ++id
+      }
     })(),
     creareGuid(len, radix) {
-      let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
-        ""
-      );
+      let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(
+        ''
+      )
       let uuid = [],
-        i;
-      radix = radix || chars.length;
+        i
+      radix = radix || chars.length
       if (len) {
-        for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)];
+        for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)]
       } else {
-        let r;
-        uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
-        uuid[14] = "4";
+        let r
+        uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-'
+        uuid[14] = '4'
         for (i = 0; i < 36; i++) {
           if (!uuid[i]) {
-            r = 0 | (Math.random() * 16);
-            uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r];
+            r = 0 | (Math.random() * 16)
+            uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r]
           }
         }
       }
-      return uuid.join("");
+      return uuid.join('')
     },
-    handlePreviewerClose(){
-      this.onPreviewClose && this.onPreviewClose();
+    handlePreviewerClose() {
+      this.onPreviewClose && this.onPreviewClose()
     },
     handlePreviewerSwitch(index) {
-      this.onPreviewSwitch && this.onPreviewSwitch(index);
+      this.onPreviewSwitch && this.onPreviewSwitch(index)
     },
     openFileBrowser() {
-      this.$refs.file.click();
+      this.$refs.file.click()
     },
     openPreviewer(index) {
-      let maxIndex = this.value.length ? this.value.length - 1 : 0;
-      index = index > maxIndex ? maxIndex : index;
-      index = index < 0 ? 0 : index;
-      this.index = index;
-      this.showPreviewDialog = true;
+      let maxIndex = this.value.length ? this.value.length - 1 : 0
+      index = index > maxIndex ? maxIndex : index
+      index = index < 0 ? 0 : index
+      this.index = index
+      this.showPreviewDialog = true
     },
     handleFileClick(file) {
-      let next = true;
+      let next = true
       if (this.onFileClick) {
-        next = this.onFileClick(file);
-        next = next === undefined ? true : next;
+        next = this.onFileClick(file)
+        next = next === undefined ? true : next
       }
-      if (next && file.status === "success") {
-        this.index = this.value.indexOf(file);
-        this.showPreviewDialog = true;
+      if (next && file.status === 'success') {
+        this.index = this.value.indexOf(file)
+        this.showPreviewDialog = true
       }
     },
     handleFileRemove(file) {
-      let isRemove = true;
+      let isRemove = true
       if (this.onFileRemove) {
-        isRemove = this.onFileRemove(file);
-        isRemove = isRemove === undefined ? true : isRemove;
+        isRemove = this.onFileRemove(file)
+        isRemove = isRemove === undefined ? true : isRemove
       }
       if (isRemove) {
-        let isComplete = this.getUploadStatus();
-        this.value.splice(this.value.indexOf(file), 1);
+        let isComplete = this.getUploadStatus()
+        this.value.splice(this.value.indexOf(file), 1)
         if (!isComplete && this.getUploadStatus() && this.onUploadComplete) {
-          this.onUploadComplete();
+          this.onUploadComplete()
         }
       }
     },
     getFileExt(file) {
-      let name = file;
-      if (typeof file === "object") {
-        name = file.name;
+      let name = file
+      if (typeof file === 'object') {
+        name = file.name
       }
-      let res = name.match(/\.([\w\d]{1,4})$/i);
-      return res ? res[1].toLowerCase() : "";
+      let res = name.match(/\.([\w\d]{1,4})$/i)
+      return res ? res[1].toLowerCase() : ''
     },
     getFileSize(file) {
-      return file.size / 1024 / 1024;
+      return file.size / 1024 / 1024
     },
     validateFile(file) {
-      let res = true;
+      let res = true
       if (this.maxFileCount > 0 && this.value.length >= this.maxFileCount) {
-        res = false;
+        res = false
       }
       if (this.maxFileSize > 0 && file.size > this.maxFileSize) {
-        res = false;
+        res = false
       }
       if (this.acceptList.length && this.acceptList.indexOf(file.ext) === -1) {
-        res = false;
+        res = false
       }
-      return res;
+      return res
     },
     reload(file) {
-      file.status = "waiting";
-      file.progress = 0;
-      this.upload(file);
+      file.status = 'waiting'
+      file.progress = 0
+      this.upload(file)
     },
     upload(file) {
       let options = {
         file: file
-      };
+      }
       if (this._isQiniu) {
-        options.key = this.getKey(file);
-        options.token = this.options.token;
+        options.key = this.getKey(file)
+        options.token = this.options.token
       } else {
         for (let key in this.options) {
           if (this.options.hasOwnProperty(key)) {
-            options[key] = this.options[key];
+            options[key] = this.options[key]
           }
         }
       }
       new Uploader(this.url)
         .upload(options)
-        .setDataType("json")
+        .setDataType('json')
         .start(file => {
-          file.status = "pending";
+          file.status = 'pending'
         })
         .progress((file, percent) => {
-          file.progress = percent;
+          file.progress = percent
         })
         .then((response, file) => {
-          file.status = "success";
-          file.progress = 100;
-          let src = undefined;
+          file.status = 'success'
+          file.progress = 100
+          let src = undefined
           if (this.onFileSuccess) {
             let param = Object.keys(this.options).length
               ? this.options
-              : undefined;
-            src = this.onFileSuccess(file, response, param);
+              : undefined
+            src = this.onFileSuccess(file, response, param)
           }
           src =
             src === undefined
               ? this._isQiniu ? this.options.domain + response.key : response
-              : src;
-          file.src = src;
+              : src
+          file.src = src
           if (this.getUploadStatus() && this.onUploadComplete) {
-            this.onUploadComplete();
+            this.onUploadComplete()
           }
         })
         .catch(file => {
-          file.status = "error";
-          this.onFileError && this.onFileError(file);
+          file.status = 'error'
+          this.onFileError && this.onFileError(file)
           if (this.getUploadStatus() && this.onUploadComplete) {
-            this.onUploadComplete();
+            this.onUploadComplete()
           }
-        });
+        })
     },
     onStart(file) {
-      this.value.push(file);
-      if (this.getFileType(file) === "image") {
+      this.value.push(file)
+      if (this.getFileType(file) === 'image') {
         if (this.supportView) {
-          let reader = new FileReader();
-          reader.readAsDataURL(file.rawFile);
+          let reader = new FileReader()
+          reader.readAsDataURL(file.rawFile)
           reader.onload = function(e) {
-            file.thumbSrc = this.result;
-          };
+            file.thumbSrc = this.result
+          }
         }
       }
     },
     onFileChange() {
-      let files = [].slice.call(this.$refs.file.files, 0);
+      let files = [].slice.call(this.$refs.file.files, 0)
       if (!files.length) {
-        return;
+        return
       }
-      this.$refs.file.value = "";
+      this.$refs.file.value = ''
       files.forEach(rawFile => {
         let file = {
           id: this.createId(),
           name: rawFile.name.trim(),
-          src: "",
+          src: '',
           ext: this.getFileExt(rawFile),
           size: this.getFileSize(rawFile),
           rawFile: rawFile,
           progress: 0,
-          status: "waiting",
-          thumbSrc: ""
-        };
-        file.type = this.getFileType(file);
+          status: 'waiting',
+          thumbSrc: ''
+        }
+        file.type = this.getFileType(file)
         if (this.validateFile(file)) {
           if (this.beforeFileAdd) {
-            let next = this.beforeFileAdd(file);
-            next = next === undefined ? true : next;
+            let next = this.beforeFileAdd(file)
+            next = next === undefined ? true : next
             if (!next) {
-              return;
+              return
             }
           }
-          this.onStart(file);
-          this.upload(file);
+          this.onStart(file)
+          this.upload(file)
         }
-      });
+      })
     }
   },
   watch: {
-    value(){
-      this.propFix();
+    value() {
+      this.propFix()
     },
     previewMode() {
-      this.getUploadToken();
+      this.getUploadToken()
     }
   }
-};
+}
 </script>

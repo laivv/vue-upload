@@ -1,58 +1,59 @@
-const path = require("path");
-const webpack = require('webpack');
-const merge = require('webpack-merge');
-const base = require('./webpack.config.base.js');
-const basePath = path.resolve (__dirname,'../');
-const htmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const glob = require('glob');
+const path = require('path')
+const webpack = require('webpack')
+const merge = require('webpack-merge')
+const base = require('./webpack.config.base.js')
+const basePath = path.resolve(__dirname, '../')
+const htmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const glob = require('glob')
 
-function getEntries(){
-    var files = glob.sync('../src/*/index.js');
-    debugger;
-    var newEntries = {};
-     files.forEach(function(file) {
-        var name = /.*\/(.+)\/index\.js$/.exec(file)[1];
-        newEntries[name] = path.join(__dirname,file);
-    });
-    debugger;
-    return newEntries;
+function getEntries() {
+  var files = glob.sync('../src/*/index.js')
+  debugger
+  var newEntries = {}
+  files.forEach(function(file) {
+    var name = /.*\/(.+)\/index\.js$/.exec(file)[1]
+    newEntries[name] = path.join(__dirname, file)
+  })
+  debugger
+  return newEntries
 }
-getEntries();
+getEntries()
 
-module.exports = merge(base,{
-    entry: getEntries(),
-    // entry: {
-    //     'uk-upload':path.join( basePath ,"./src/uk-upload/index.js"),
-    //     'uk-previewer': path.join(basePath , "./src/uk-previewer/index.js"),
-    //     'uk-video-player': path.join(basePath , "./src/uk-video-player/index.js")
-    // },
-    externals:{
-        vue:'Vue'
-    },
-    module:{
-        rules:[
-            {
-                test:/\.css$/,
-                use:ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: "css-loader"
-                  })
-            }
-        ]
-    },  
-    plugins:[
-        new htmlWebpackPlugin({
-            title:'文件上传 - uk-upload',
-            chunks:['uk-upload'],
-            filename: 'index.html',
-            template: path.join(basePath,'./index.html'),
-            inject: 'head',
-            chunksSortMode: 'dependency',
-            isProd:true
-        }),
-        new ExtractTextPlugin('[name]/[name].min.css'),
-        new OptimizeCssAssetsPlugin(),
+module.exports = merge(base, {
+  entry: getEntries(),
+  // entry: {
+  //     'uk-upload':path.join( basePath ,"./src/uk-upload/index.js"),
+  //     'uk-previewer': path.join(basePath , "./src/uk-previewer/index.js"),
+  //     'uk-video-player': path.join(basePath , "./src/uk-video-player/index.js")
+  // },
+  externals: {
+    vue: 'Vue'
+  },
+  mode: 'production',
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
+      }
     ]
+  },
+  plugins: [
+    new htmlWebpackPlugin({
+      title: '文件上传 - uk-upload',
+      chunks: ['uk-upload'],
+      filename: 'index.html',
+      template: path.join(basePath, './index.html'),
+      inject: 'head',
+      chunksSortMode: 'dependency',
+      isProd: true
+    }),
+    new ExtractTextPlugin('[name]/[name].min.css'),
+    new OptimizeCssAssetsPlugin()
+  ]
 })
