@@ -15,6 +15,54 @@
 </script>  
 ```
 
+
+### 给组件绑定初始列表
+```html
+<uk-upload v-model="fileList"></uk-upload>
+
+<script>
+  new Vue({
+    data(){
+      return {
+        fileList:[
+          {
+            src:'/a1.jpg',
+            type:'image' //如果初始列表不设置type属性，默认为 `file` ，将不能作为图片预览
+          },
+          {
+            src:'/a2.avi',
+            type:'video'
+          },
+          {
+            src:'/a3.mp3',
+            type:'audio'
+          },
+          {
+            src:'/a4.txt',
+            type:'text'
+          },
+          {
+            src:'/a5.zip',
+            type:'rar'
+          },
+          {
+            src:'/a5.7z',
+            type:'rar'
+          },
+          {
+            src:'/a6-unknow-file-type',
+            type:'file'
+          },
+        ]
+      }
+    }
+  })
+
+</script>  
+```
+
+
+
 ### 获取上传状态
 
 ```html
@@ -101,6 +149,56 @@
 
 </script>  
 ```
+
+
+### 将组件当作预览器使用
+
+```html
+<uk-upload ref="upload" :preview-mode="true" :show-file-list="false" v-model="currentFileList"></uk-upload>
+<div>
+  <img :src="image.src" v-for="(image,index) in image1" @click="showPreview(index,image1)">
+</div>
+<div>
+  <img :src="image.src" v-for="(image,index) in image2" @click="showPreview(index,image2)">
+</div>
+<script>
+  new Vue({
+    data(){
+      return {
+        image1:[
+          {
+            src:'/a1.jpg',
+            type:'image'
+          },
+          {
+            src:'/a2.jpg',
+            type:'image'
+          }
+        ],
+         image2:[
+          {
+            src:'/b1.jpg',
+            type:'image'
+          },
+          {
+            src:'/b2.jpg',
+            type:'image'
+          }
+        ],
+        currentFileList:[]
+      }
+    },
+    methods:{
+      showPreview(index,files){
+          this.currentFileList = files
+          this.$refs.upload.openPreviewer(index)
+      }
+    }
+  })
+
+</script>  
+```
+
 
 
 ### 属性
