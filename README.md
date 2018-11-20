@@ -121,3 +121,15 @@
 |showPreviewFileName|显示全屏预览器中的文件名|Boolean|false|
 |listType|文件列表的显示方式,可选值 'list' 或 'card'|String|card|
 
+### 回调钩子
+|属性名|说明|回调参数|回调参数说明|
+|-------|--------------------|-----|-------------|
+|beforeFileAdd|当某个文件在添加到上传列表之前调用，通过返回true或false来决定该文件是否被添加|Function(file)|即将被添加的文件|
+|onFileSuccess|当某个文件上传成功时调用|Function(file)|某个上传成功的文件|
+|onFileError|当某个文件上传失败时调用|Function(file)|某个上传失败的文件|
+|onUploadComplete|当所有文件上传完毕时调用（无论上传成功还是失败）|Function()|无|
+|onFileClick|当点击文件列表中的某个文件时调用，通过返回true或false来决定是否打开预览窗|Function(file)|被点击的那个文件|
+|onFileRemove|当移除文件列表中的某个文件时调用，通过返回true或false来决定该文件是否移除|Function(file)|将被移除的那个文件|
+|onPreviewClose|当预览窗关闭的时候调用|Function()|无|
+|onPreviewSwitch|当在预览窗中切换上一个或下一个文件时调用|Function(index)|当前文件在文件列表filelist中的索引位置|
+
