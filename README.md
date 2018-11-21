@@ -4,14 +4,13 @@
 <uk-upload v-model="fileList"></uk-upload>
 
 <script>
-  new Vue({
+  export default {
     data(){
       return {
         fileList:[]
       }
     }
-  })
-
+  }
 </script>  
 ```
 
@@ -21,13 +20,13 @@
 <uk-upload v-model="fileList"></uk-upload>
 
 <script>
-  new Vue({
+ export default {
     data(){
       return {
         fileList:[
           {
             src:'/a1.jpg',
-            type:'image' //如果初始列表不设置type属性，默认为 `file` ，将不能作为图片预览
+            type:'image' //如果不设置type属性，默认为 `file` ，将不能作为图片预览
           },
           {
             src:'/a2.avi',
@@ -56,7 +55,7 @@
         ]
       }
     }
-  })
+  }
 
 </script>  
 ```
@@ -68,8 +67,9 @@
 ```html
 <uk-upload ref="upload" v-model="fileList"></uk-upload>
 <button @click="submit">提交</button>
+
 <script>
-  new Vue({
+ export default {
     data(){
       return {
         fileList:[]
@@ -84,7 +84,7 @@
       }
   
     }
-  })
+  }
 
 </script>  
 ```
@@ -94,8 +94,9 @@
 ```html
 <uk-upload ref="upload" v-model="fileList"></uk-upload>
 <button @click="submit">提交</button>
+
 <script>
-  new Vue({
+  export default {
     data(){
       return {
         fileList:[]
@@ -114,7 +115,7 @@
           }
       }
     }
-  })
+  }
 
 </script>  
 ```
@@ -126,8 +127,9 @@
 <uk-upload ref="upload" v-model="fileList"></uk-upload>
 <button @click="getErrorFiles">获取上传失败的文件列表</button>
 <button @click="getFiles">获取所有文件列表</button>
+
 <script>
-  new Vue({
+  export default {
     data(){
       return {
         fileList:[]
@@ -140,12 +142,12 @@
         console.log(errorFileList)
       },
       getFiles() {
-        //同 `v-model` 绑定的list一样
+        //上传成功的文件列表，同 `v-model` 绑定的list一样
         const files = this.$refs.upload.getFileList()
         console.log(files)
-    },
+      },
     }
-  })
+  }
 
 </script>  
 ```
@@ -161,8 +163,9 @@
 <div>
   <img :src="image.src" v-for="(image,index) in image2" @click="showPreview(index,image2)">
 </div>
+
 <script>
-  new Vue({
+ export default {
     data(){
       return {
         image1:[
@@ -194,7 +197,7 @@
           this.$refs.upload.openPreviewer(index)
       }
     }
-  })
+  }
 
 </script>  
 ```
@@ -204,7 +207,7 @@
 ### 属性
 |属性名|说明|类型|默认值|
 |-------|----------------|-----|------|
-|url|上传的url地址|String|upload.qiniu.com|
+|url|上传的url地址|String|http://up.qiniu.com|
 |v-model|绑定的数据|Array|[]|
 |multiple|是否支持同时选择多个文件|Boolean|true|
 |maxFileSize|单个文件大小限制（MB）|Number|无|
