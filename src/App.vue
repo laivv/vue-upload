@@ -12,8 +12,11 @@
 			:show-file-name="true"
 			:preview-mode="false"
 			:show-file-list="true"
-			:max-file-size="0"
-			:accept-list="[]"
+			:max-file-size="0.1"
+			:accept-list="['png']"
+			:on-file-type-error="onFileTypeError"
+			:on-file-count-error="onFileCountError"
+			:on-file-size-error="onFileSizeError"
 			:before-file-add="beforeFileAdd"
 			:on-file-remove="onFileRemove"
 			:on-file-click="onFileClick"
@@ -92,6 +95,18 @@
 			},
 			getOringinalList: function() {
 				console.log(this.fileList);
+			},
+			onFileTypeError: function(files) {
+				alert('文件类型不正确');
+				console.log(files);
+			},
+			onFileSizeError: function(files) {
+				alert('文件大小超过设定值');
+				console.log(files);
+			},
+			onFileCountError: function(files) {
+				alert('最多上传5个文件');
+				console.log(files);
 			},
 		},
 	};

@@ -9,112 +9,32 @@
 			@change="onFileChange"
 		/>
 		<input v-else ref="file" type="file" style="display:none;" @change="onFileChange" />
-		<div class="uk-upload-text" v-if="!previewMode && listType !== 'card'">
-			<a @click="openFileBrowser" :disabled="!enableUpload || overMaxCount">
-				<slot><button class="uk-upload-text-btn">上传文件</button></slot>
-			</a>
-		</div>
-		<template v-if="listType === 'card'">
-			<template v-if="showFileList">
-				<div class="uk-upload-item" v-for="file in value" :key="file.id">
-					<div class="uk-upload-item-wrap">
-						<div class="uk-upload-item-content">
-							<span class="uk-upload-item-remove" @click="handleFileRemove(file)" v-if="!previewMode"
-								>×</span
-							>
-							<div class="uk-upload-full uk-upload-img-wrap" @click="handleFileClick(file)">
-								<template v-if="file.type==='image'">
-									<img
-										:src="file.thumbSrc"
-										v-if="supportView || file.status==='success'"
-										class="uk-upload-img"
-									/>
-								</template>
-								<template v-else>
-									<span
-										class="iconfont0"
-										:class="{'icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}"
-									>
-									</span>
-								</template>
-							</div>
-							<div
-								class="uk-upload-mask"
-								:class="{'uk-upload-mask-error':file.status === 'error'}"
-								v-show="file.status!=='success'"
-							>
-								<div class="uk-upload-progress" v-show="file.status =='pending'">
-									<span class="uk-upload-progress-bar">{{ file.progress }}%</span>
-								</div>
-								<span class="uk-upload-error" v-if="file.status==='error'">
-									<i class="iconfont0 icon-error"></i>
-								</span>
-								<span class="uk-upload-retry" @click="reload(file)" title="重试">
-									<i class="iconfont0 icon-iconziti38"></i>
-								</span>
-							</div>
-							<div v-if="showFileName" class="uk-upload-file-name" :title="file.name">
-								{{ file.name }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</template>
-			<div class="uk-upload-item" v-if="!previewMode && enableUpload && !overMaxCount">
-				<div class="uk-upload-item-wrap">
-					<div class="uk-upload-item-content uk-upload-add-btn" @click="openFileBrowser">
-						<div class="uk-upload-full uk-upload-add-btn"><span class="uk-upload-add-icon">+</span></div>
-					</div>
-				</div>
-			</div>
+		<template v-if="showFileList">
+			<upload-card-list
+				v-if="listType === 'card'"
+				:fileList="value"
+				:showUploadBtn="!previewMode && enableUpload && !overMaxCount"
+        :readonly="previewMode"
+        :showFileName="showFileName"
+				@onAdd="openFileBrowser"
+				@onReload="reload"
+				@onRemove="handleFileRemove"
+				@onItemClick="handleFileClick"
+			>
+			</upload-card-list>
+			<upload-text-list
+				v-else
+				:fileList="value"
+				:enableUploadBtn="!previewMode && enableUpload && !overMaxCount"
+				:readonly="previewMode"
+				@onAdd="openFileBrowser"
+				@onReload="reload"
+				@onRemove="handleFileRemove"
+				@onItemClick="handleFileClick"
+			>
+			</upload-text-list>
 		</template>
-		<template v-else>
-			<ul v-if="showFileList" class="uk-upload-list">
-				<li class="uk-upload-list-item" v-for="file in value" :key="file.id">
-					<div class="uk-upload-list-name uk-upload-clearfix">
-						<span
-							class="uk-upload-list-title"
-							:class="{'uk-upload-list-error':file.status === 'error'}"
-							@click="handleFileClick(file)"
-						>
-							<span
-								class="iconfont0"
-								:class="{'icon-tupian-copy':file.type==='image','icon-wenbenwenjian':file.type === 'text','icon-file':file.type === 'file','icon--file-music':file.type === 'audio','icon-filevideo':file.type=== 'video','icon-filezip':file.type==='rar'}"
-							>
-							</span>
-							{{ file.name }}
-						</span>
-						<span class="uk-upload-list-icons uk-upload-right" v-if="!previewMode">
-							<span class="uk-upload-list-tip" v-if="file.status === 'pending'"
-								>{{ file.progress }}%</span
-							>
-							<template v-if="file.status === 'error'">
-								<span class="uk-upload-list-retry" title="重试" @click="reload(file)">
-									<i class="iconfont0 icon-iconziti38"></i>
-								</span>
-								<span class="uk-upload-list-tip uk-upload-list-error">
-									<i class="iconfont0 icon-iconsb"></i>
-								</span>
-							</template>
-							<span class="uk-upload-list-tip" v-if="file.status === 'success'">
-								<i class="iconfont0 icon-icon-check-solid"></i>
-							</span>
-							<span v-if="file.status === 'waiting'" class="uk-upload-list-tip uk-upload-list-wait">
-								<i class="iconfont0 icon-waiting"></i>
-							</span>
-							<span class="uk-upload-list-remove" @click="handleFileRemove(file)" title="删除">×</span>
-						</span>
-					</div>
-					<div class="uk-upload-list-progress" v-if="file.status === 'pending'">
-						<div
-							class="uk-upload-list-progress-bar"
-							:class="{'uk-upload-error-bar':file.status === 'error'}"
-							:style="{width:file.progress + '%'}"
-						></div>
-					</div>
-				</li>
-			</ul>
-		</template>
+
 		<uk-previewer
 			:file-list="value"
 			:visible.sync="showPreviewDialog"
@@ -127,6 +47,8 @@
 	</div>
 </template>
 <script>
+	import UploadCardList from './upload-card-list.js';
+	import UploadTextList from './upload-text-list.js';
 	import UkPreviewer from '../uk-previewer/index.js';
 	import Uploader from './Uploader.js';
 	export default {
@@ -205,6 +127,8 @@
 		},
 		components: {
 			UkPreviewer,
+			UploadCardList,
+			UploadTextList,
 		},
 		data() {
 			return {
@@ -538,7 +462,7 @@
 				return true;
 			},
 			validateFile(file) {
-				return this.validateType() && this.validateCount() && this.validateSize();
+				return this.validateType(file) && this.validateCount() && this.validateSize(file);
 			},
 			reload(file) {
 				file.status = 'waiting';
