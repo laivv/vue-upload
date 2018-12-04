@@ -31,8 +31,8 @@ export default {
     request: (function() {
       let xhr = null;
       let start = function(flag) {
-        let _self = this;
-        _self.text = "";
+        let _this = this;
+        _this.text = "";
         if (xhr && xhr.readyState !== 4) {
           xhr.abort();
           xhr = null;
@@ -40,8 +40,8 @@ export default {
         if (!flag) {
           return;
         }
-        if (typeof _self.src === undefined) {
-          _self.$emit("error");
+        if (_this.src === undefined) {
+          _this.$emit("error");
           return;
         }
         xhr = new XMLHttpRequest();
@@ -49,15 +49,15 @@ export default {
         xhr.onreadystatechange = function() {
           if (xhr.readyState === 4) {
             if (xhr.status === 200 || xhr.status === 304) {
-              _self.originalData = xhr.response;
-              _self.decoder("gbk");
-              _self.$emit("load");
+              _this.originalData = xhr.response;
+              _this.decoder("gbk");
+              _this.$emit("load");
             } else {
-              _self.$emit("error");
+              _this.$emit("error");
             }
           }
         };
-        xhr.open("GET", _self.src);
+        xhr.open("GET", _this.src);
         xhr.send();
       };
       return start;
