@@ -1,9 +1,7 @@
 <template>
 	<div>
 		<div class="uk-upload-text" v-if="!readonly">
-			<a @click="handleAddClick" :disabled="!enableUploadBtn">
-				<button class="uk-upload-text-btn">上传文件</button>
-			</a>
+			<button class="uk-upload-text-btn" @click="handleAddClick" :disabled="!enableUpload">上传文件</button>
 		</div>
 		<ul class="uk-upload-list">
 			<li class="uk-upload-list-item" v-for="file in fileList" :key="file.id">
@@ -59,7 +57,7 @@
 					return [];
 				},
 			},
-			enableUploadBtn: {
+			enableUpload: {
 				type: Boolean,
 				default: true,
 			},

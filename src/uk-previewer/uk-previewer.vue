@@ -253,8 +253,12 @@
 					this.top = this.offTop + y + 'px';
 				}
 			},
-			resetFileLoadState(src, status) {
+			resetFileLoadState(nextFile) {
 				let state = this.fileState[this.fileId];
+				if (nextFile.src === this.fileSrc) {
+					let nextState = this.fileState[nextFile.fileId];
+					nextState.loadState = state.loadState === 'success' ? 'success' : 'pending';
+				}
 				if (state.loadState !== 'success') {
 					state.loadState = 'pending';
 				}
@@ -276,8 +280,9 @@
 			swicthFile(n) {
 				let index = this.getIndex(n);
 				if (index !== this.curIndex) {
-					this.onSwitch && this.onSwitch(index, this.fileList[index]);
-					this.resetFileLoadState();
+					let file = this.fileList[index];
+					this.onSwitch && this.onSwitch(index, file);
+					this.resetFileLoadState(file);
 					this.setCurrentIndex(index);
 				}
 			},

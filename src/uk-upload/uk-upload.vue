@@ -12,10 +12,10 @@
 		<template v-if="showFileList">
 			<upload-card-list
 				v-if="listType === 'card'"
-				:fileList="value"
-				:showUploadBtn="!previewMode && enableUpload && !overMaxCount"
-        :readonly="previewMode"
-        :showFileName="showFileName"
+				:file-list="value"
+				:enable-upload="!previewMode && enableUpload && !overMaxCount"
+				:readonly="previewMode"
+				:show-file-name="showFileName"
 				@onAdd="openFileBrowser"
 				@onReload="reload"
 				@onRemove="handleFileRemove"
@@ -24,8 +24,8 @@
 			</upload-card-list>
 			<upload-text-list
 				v-else
-				:fileList="value"
-				:enableUploadBtn="!previewMode && enableUpload && !overMaxCount"
+				:file-list="value"
+				:enable-upload="!previewMode && enableUpload && !overMaxCount"
 				:readonly="previewMode"
 				@onAdd="openFileBrowser"
 				@onReload="reload"
@@ -377,8 +377,8 @@
 			handlePreviewerClose() {
 				this.onPreviewClose && this.onPreviewClose();
 			},
-			handlePreviewerSwitch(index) {
-				this.onPreviewSwitch && this.onPreviewSwitch(index);
+			handlePreviewerSwitch(index,file) {
+				this.onPreviewSwitch && this.onPreviewSwitch(index,file);
 			},
 			openFileBrowser() {
 				this.$refs.file.click();

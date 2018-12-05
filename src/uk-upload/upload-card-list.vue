@@ -40,7 +40,7 @@
 			</div>
 		</div>
 
-		<div class="uk-upload-item" v-if="!readonly && showUploadBtn">
+		<div class="uk-upload-item" v-if="!readonly && enableUpload">
 			<div class="uk-upload-item-wrap">
 				<div class="uk-upload-item-content uk-upload-add-btn" @click="handleAddClick">
 					<div class="uk-upload-full uk-upload-add-btn"><span class="uk-upload-add-icon">+</span></div>
@@ -58,7 +58,7 @@
 					return [];
 				},
 			},
-			showUploadBtn: {
+			enableUpload: {
 				type: Boolean,
 				default: true,
 			},
