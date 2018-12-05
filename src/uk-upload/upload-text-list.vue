@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="uk-upload-text" v-if="!readonly">
-			<a @click="handleAddClick" :disabled="!enableUploadBtn">
+			<a @click="handleAddClick" :disabled="!enableUpload">
 				<button class="uk-upload-text-btn">上传文件</button>
 			</a>
 		</div>
@@ -59,7 +59,7 @@
 					return [];
 				},
 			},
-			enableUploadBtn: {
+			enableUpload: {
 				type: Boolean,
 				default: true,
 			},
