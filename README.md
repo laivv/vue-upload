@@ -153,8 +153,59 @@
 ```
 
 
-### 将组件当作预览器使用
 
+### 组件只读展示
+##### 将组件的`previewMode`属性设置为`true`则仅将组件作展示用途，不能上传或编辑
+```html
+<uk-upload v-model="fileList" :preview-mode="true"></uk-upload>
+
+<script>
+ export default {
+    data(){
+      return {
+        fileList:[
+          {
+            src:'/a1.jpg',
+            type:'image' 
+          },
+          {
+            src:'/a2.avi',
+            type:'video'
+          },
+          {
+            src:'/a3.mp3',
+            type:'audio'
+          },
+          {
+            src:'/a4.txt',
+            type:'text'
+          },
+          {
+            src:'/a5.zip',
+            type:'rar'
+          },
+          {
+            src:'/a5.7z',
+            type:'rar'
+          },
+          {
+            src:'/a6-unknow-file-type',
+            type:'file'
+          },
+        ]
+      }
+    }
+  }
+
+</script>  
+```
+
+
+
+
+### 单独使用组件的预览窗功能
+##### 当不想使用组件自带的文件列表，但又想使用组件的预览功能时，可以仅使用组件的预览功能
+##### 将组件的`previewMode`属性设置为`true`，并且将`showFileList`设置为`false`能够起到不显示组件的作用
 ```html
 <uk-upload ref="upload" :preview-mode="true" :show-file-list="false" v-model="currentFileList"></uk-upload>
 <div>
