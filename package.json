@@ -4,8 +4,8 @@
   "description": "a vue upload component",
   "main": "./src/uk-upload/index.js",
   "scripts": {
-    "dev": "cd ./build && webpack-dev-server --config webpack.config.dev.js",
-    "build": "cd ./build && webpack --config webpack.config.prod.js"
+    "dev": "cd ./build && cross-env NODE_ENV=development webpack-dev-server --hot --progress --config webpack.config.dev.js",
+    "build": "cd ./build && cross-env NODE_ENV=production && webpack --progress --config webpack.config.prod.js"
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-es2015": "^6.24.1",
+    "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.11",

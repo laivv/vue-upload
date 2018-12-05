@@ -377,8 +377,8 @@
 			handlePreviewerClose() {
 				this.onPreviewClose && this.onPreviewClose();
 			},
-			handlePreviewerSwitch(index) {
-				this.onPreviewSwitch && this.onPreviewSwitch(index);
+			handlePreviewerSwitch(index,file) {
+				this.onPreviewSwitch && this.onPreviewSwitch(index,file);
 			},
 			openFileBrowser() {
 				this.$refs.file.click();
