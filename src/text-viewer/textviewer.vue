@@ -1,7 +1,7 @@
 <template>
-    <div class="uk-text-viewer">
-      <div class="uk-text-viewer-text" v-show="text"> {{text}}</div>
-    </div>
+  <div class="uk-text-viewer">
+    <div class="uk-text-viewer-text" v-show="text">{{text}}</div>
+  </div>
 </template>
 <script>
 export default {

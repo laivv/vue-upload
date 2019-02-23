@@ -7,10 +7,10 @@ const _defaulRequestConfig = {
     'X-Requested-With': 'XMLHttpRequest'
   },
   data: null,
-  done: function() {}
+  done: function () { }
 }
 
-const parseJSONString = function(str) {
+const parseJSONString = function (str) {
   if (typeof str === 'string') {
     try {
       str = JSON.parse(str)
@@ -23,7 +23,7 @@ const parseJSONString = function(str) {
   return null
 }
 
-const setHeaders = function(target, headers) {
+const setHeaders = function (target, headers) {
   for (let h in headers) {
     if (headers.hasOwnProperty(h)) {
       target.setRequestHeader(h, headers[h])
@@ -31,7 +31,7 @@ const setHeaders = function(target, headers) {
   }
 }
 
-const serializeParams = function(params) {
+const serializeParams = function (params) {
   if (!params) {
     return ''
   }
@@ -44,7 +44,7 @@ const serializeParams = function(params) {
   return paramStr
 }
 
-const _request = function(_config) {
+const _request = function (_config) {
   const xhr = new XMLHttpRequest()
   const config = Object.assign({}, _defaulRequestConfig, _config)
 
@@ -59,7 +59,7 @@ const _request = function(_config) {
   }
 
   xhr.responseType = config.responseType
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function () {
     if (xhr.status === 200 && xhr.readyState === xhr.DONE) {
       let response = parseJSONString(xhr.responseText) || xhr.response
       config.done(response)
