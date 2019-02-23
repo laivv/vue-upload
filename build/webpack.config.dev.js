@@ -15,7 +15,7 @@ module.exports = merge(base, {
     rules: [
       {
         test: /\.css$/,
-        loader: ['style-loader', 'css-loader']
+        loader: ['style-loader', 'css-loader', 'postcss-loader']
       }
     ]
   },

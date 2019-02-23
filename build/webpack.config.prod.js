@@ -10,13 +10,11 @@ const glob = require('glob')
 
 function getEntries() {
   var files = glob.sync('../src/*/index.js')
-  debugger
   var newEntries = {}
   files.forEach(function (file) {
     var name = /.*\/(.+)\/index\.js$/.exec(file)[1]
     newEntries[name] = path.join(__dirname, file)
   })
-  debugger
   return newEntries
 }
 getEntries()
@@ -33,7 +31,7 @@ module.exports = merge(base, {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: 'css-loader'
+					use: [{ loader: 'css-loader' }, { loader: 'postcss-loader' }],
         })
       }
     ]
