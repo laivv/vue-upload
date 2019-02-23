@@ -1,7 +1,16 @@
 # vue-upload
+轻量级的vue上传组件，支持查看大图、播放音频和视频  
+## install
+```sh
+git clone https://github.com/laivv/vue-upload.git
+```
+## usage
+```js
+import upload from './upload'
+```
 ### 使用组件
 ```html
-<uk-upload v-model="fileList"></uk-upload>
+<upload v-model="fileList"></upload>
 
 <script>
   export default {
@@ -17,7 +26,7 @@
 
 ### 给组件绑定初始列表
 ```html
-<uk-upload v-model="fileList"></uk-upload>
+<upload v-model="fileList"></upload>
 
 <script>
  export default {
@@ -65,7 +74,7 @@
 ### 获取上传状态
 
 ```html
-<uk-upload ref="upload" v-model="fileList"></uk-upload>
+<upload ref="upload" v-model="fileList"></upload>
 <button @click="submit">提交</button>
 
 <script>
@@ -92,7 +101,7 @@
 ### 获取上传成功的文件列表
 
 ```html
-<uk-upload ref="upload" v-model="fileList"></uk-upload>
+<upload ref="upload" v-model="fileList"></upload>
 <button @click="submit">提交</button>
 
 <script>
@@ -124,7 +133,7 @@
 ### 获取 所有/失败 的文件列表
 
 ```html
-<uk-upload ref="upload" v-model="fileList"></uk-upload>
+<upload ref="upload" v-model="fileList"></upload>
 <button @click="getErrorFiles">获取上传失败的文件列表</button>
 <button @click="getFiles">获取所有文件列表</button>
 
@@ -155,9 +164,9 @@
 
 
 ### 组件只读展示
-##### 将组件的`previewMode`属性设置为`true`则仅将组件作展示用途，不能上传或编辑
+将组件的`previewMode`属性设置为`true`则仅将组件作展示用途，不能上传或编辑
 ```html
-<uk-upload v-model="fileList" :preview-mode="true"></uk-upload>
+<upload v-model="fileList" :preview-mode="true"></upload>
 
 <script>
  export default {
@@ -204,10 +213,10 @@
 
 
 ### 单独使用组件的预览窗功能
-##### 当不想使用组件自带的文件列表，但又想使用组件的预览功能时，可以仅使用组件的预览功能
-##### 将组件的`previewMode`属性设置为`true`，并且将`showFileList`设置为`false`能够起到不显示组件的作用
+当不想使用组件自带的文件列表，但又想使用组件的预览功能时，可以仅使用组件的预览功能  
+将组件的`previewMode`属性设置为`true`，并且将`showFileList`设置为`false`能够起到不显示组件的作用
 ```html
-<uk-upload ref="upload" :preview-mode="true" :show-file-list="false" v-model="currentFileList"></uk-upload>
+<upload ref="upload" :preview-mode="true" :show-file-list="false" v-model="currentFileList"></upload>
 <div>
   <img :src="image.src" v-for="(image,index) in image1" @click="showPreview(index,image1)">
 </div>

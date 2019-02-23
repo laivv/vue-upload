@@ -12,7 +12,7 @@ function getEntries() {
   var files = glob.sync('../src/*/index.js')
   debugger
   var newEntries = {}
-  files.forEach(function(file) {
+  files.forEach(function (file) {
     var name = /.*\/(.+)\/index\.js$/.exec(file)[1]
     newEntries[name] = path.join(__dirname, file)
   })
@@ -40,8 +40,8 @@ module.exports = merge(base, {
   },
   plugins: [
     new htmlWebpackPlugin({
-      title: '文件上传 - uk-upload',
-      chunks: ['uk-upload'],
+      title: '文件上传 - upload',
+      chunks: ['upload'],
       filename: 'index.html',
       template: path.join(basePath, './index.html'),
       inject: 'head',
