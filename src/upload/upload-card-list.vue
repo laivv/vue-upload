@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="!autoUpload" class="uk-upload-header-line">
+      <button class="uk-upload-text-btn" @click="handleStartUploadClick" :disabled="disabledStartButton">开始上传</button>
+    </div>
     <div class="uk-upload-item" v-for="file in fileList" :key="file.id">
       <div class="uk-upload-item-wrap">
         <div class="uk-upload-item-content">
@@ -11,7 +14,7 @@
           <div class="uk-upload-full uk-upload-img-wrap" @click="handleFileClick(file)">
             <template v-if="file.type==='image'">
               <img
-                :src="file.thumbSrc"
+                :src="file.base64 || file.src + file.thumbQuery"
                 v-if="supportView || file.status==='success'"
                 class="uk-upload-img"
               >
@@ -30,6 +33,9 @@
           >
             <div class="uk-upload-progress" v-show="file.status =='pending'">
               <span class="uk-upload-progress-bar">{{ file.progress }}%</span>
+            </div>
+            <div class="uk-upload-progress" v-show="file.status =='waiting'">
+              <i class="iconfont0 icon-waiting uk-upload-waiting-icon"></i>
             </div>
             <span class="uk-upload-error" v-if="file.status==='error'">
               <i class="iconfont0 icon-error"></i>
@@ -63,6 +69,10 @@ export default {
         return [];
       }
     },
+    autoUpload: {
+      type: Boolean,
+      default: true
+    },
     enableUpload: {
       type: Boolean,
       default: true
@@ -81,9 +91,17 @@ export default {
       supportView: FileReader && new FileReader().readAsDataURL
     };
   },
+  computed: {
+    disabledStartButton() {
+      return !this.fileList.filter(file => file.status === "waiting").length;
+    }
+  },
   methods: {
     handleAddClick() {
       this.$emit("onAdd");
+    },
+    handleStartUploadClick() {
+      this.$emit("onStart");
     },
     handleReloadClick(file) {
       this.$emit("onReload", file);

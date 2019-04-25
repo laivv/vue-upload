@@ -82,7 +82,7 @@ export default class Uploader {
     this.xhr.upload.onprogress = e => {
       if (self.progressCallback) {
         let progress = e.total ? (e.loaded / e.total) * 100 : 0;
-        self.progressCallback(self.file, parseInt(progress));
+        self.progressCallback(self.file, Math.floor(progress));
       }
     };
     setTimeout(() => {

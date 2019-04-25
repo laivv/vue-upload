@@ -1,7 +1,17 @@
 <template>
   <div>
     <div class="uk-upload-text" v-if="!readonly">
-      <button class="uk-upload-text-btn" @click="handleAddClick" :disabled="!enableUpload">上传文件</button>
+      <button
+        class="uk-upload-text-btn"
+        @click="handleAddClick"
+        :disabled="!enableUpload"
+      >{{autoUpload ? '上传文件' : '选择文件'}}</button>
+      <button
+        v-if="!autoUpload"
+        class="uk-upload-text-btn"
+        @click="handleStartUploadClick"
+        :disabled="disabledStartButton"
+      >开始上传</button>
     </div>
     <ul class="uk-upload-list">
       <li class="uk-upload-list-item" v-for="file in fileList" :key="file.id">
@@ -63,14 +73,26 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    },
+    autoUpload: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {};
   },
+  computed: {
+    disabledStartButton() {
+      return !this.fileList.filter(file => file.status === "waiting").length;
+    }
+  },
   methods: {
     handleAddClick() {
       this.$emit("onAdd");
+    },
+    handleStartUploadClick() {
+      this.$emit("onStart");
     },
     handleReloadClick(file) {
       this.$emit("onReload", file);

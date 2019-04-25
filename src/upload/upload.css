@@ -1,4 +1,7 @@
 @import 'font/iconfont.css';
+.uk-upload-header-line{
+  margin-bottom:10px;
+}
 .uk-upload-right{
     float: right;
 }
@@ -44,8 +47,6 @@
     width: 85%;
     position: relative;
     padding-top: 85%;
-    margin-left: auto;
-    margin-right: auto;
 }
 .uk-upload-item-content,
 .uk-upload-mask {
@@ -66,14 +67,11 @@
     background-color: rgba(0, 0, 0, 0.2);
 }
 .uk-upload-progress {
-    height: 40px;
-    width: 40px;
+    width:100%;
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    border-radius: 50%;
-    border: solid 5px rgba(255,255,255,0.6);
+    left: 0%;
+    transform: translateY(-50%);
     text-align: center;
 }
 .uk-upload-progress-bar {
@@ -81,6 +79,9 @@
     color: #fff;
     line-height: 40px;
     font-weight: bold;
+}
+.uk-upload-waiting-icon{
+  color:#fff;
 }
 .uk-upload-error .iconfont0{
     color:red;

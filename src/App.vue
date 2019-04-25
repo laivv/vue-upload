@@ -5,8 +5,10 @@
       v-model="fileList"
       :list-type="listType"
       :multiple="true"
+      :auto-upload="autoUpload"
       :enable-upload="true"
-      :max-file-count="1"
+      :max-file-count="50"
+
       :show-file-name="true"
       :preview-mode="false"
       :show-file-list="true"
@@ -26,24 +28,25 @@
     <button @click="getErrorList">获取上传失败的文件列表</button>
     <button @click="getUploadingList">获取上传中的文件列表</button>
     <button @click="switchListType">切换列表类型</button>
+    <button @click="switchAutoUpload">切换自动上传</button>
   </div>
 </template>
 <script>
-import request from "./request";
 export default {
   data() {
     return {
       listType: "card",
       fileList: [
-        "http://vjs.zencdn.net/v/oceans.mp4 ",
-        "http://ohjdda8lm.bkt.clouddn.com/course/sample1.mp4",
+       {src: "http://vjs.zencdn.net/v/oceans.mp4 ",status:'waiting'},
+        {src:"http://ohjdda8lm.bkt.clouddn.com/course/sample1.mp4",status:'pending'},
         "http://yun.it7090.com/video/XHLaunchAd/video02.mp4",
         "http://www.w3school.com.cn/i/movie.ogg",
         "http://www.w3school.com.cn/example/html5/mov_bbb.mp4",
         "http://yun.it7090.com/video/XHLaunchAd/video03.mp4",
         "http://yun.it7090.com/video/XHLaunchAd/video01.mp4",
         "不支持的文件测试-unknow"
-      ]
+      ],
+      autoUpload:true,
     };
   },
   methods: {
@@ -53,6 +56,9 @@ export default {
     onFileRemove: function(file) {
       console.log(file);
       return true;
+    },
+    switchAutoUpload: function() {
+      this.autoUpload = !this.autoUpload;
     },
     onFileClick: function(file) {
       console.log(file);
