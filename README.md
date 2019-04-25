@@ -277,7 +277,6 @@ import upload from './upload'
 |acceptList|可上传的文件扩展名列表(如 ['jpg','png'])|Array|无|
 |thumbQuery|如果上传的是图片，此参数为缩略图query字符串,(如'?image/height/200/width/100')|String|无|
 |tokenUrl|获取上传token的url列表(如 ['/api/token1','/api/token2']),接口应当返回一个{key:value}形式的数据|Array|无|
-
 |previewMode|是否预览模式,设为true将不能上传，只作展示使用|Boolean|false|
 |enableUpload|是否开启上传，某些条件下不允许用户再进行上传操作可设置为false|Boolean|true|
 |showFileName|显示上传的文件名|Boolean|false|
