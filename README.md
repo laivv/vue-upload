@@ -269,13 +269,15 @@ import upload from './upload'
 |-------|----------------|-----|------|
 |url|上传的url地址|String|http://up.qiniu.com|
 |v-model|绑定的数据|Array|[]|
+|name|上传的参数名|String|`file`|
+|autoUpload|是否在选择文件后立即上传|Boolean|`true`|
 |multiple|是否支持同时选择多个文件|Boolean|true|
 |maxFileSize|单个文件大小限制（MB）|Number|无|
 |maxFileCount|最多上传多少个文件|Number|无|
 |acceptList|可上传的文件扩展名列表(如 ['jpg','png'])|Array|无|
 |thumbQuery|如果上传的是图片，此参数为缩略图query字符串,(如'?image/height/200/width/100')|String|无|
 |tokenUrl|获取上传token的url列表(如 ['/api/token1','/api/token2']),接口应当返回一个{key:value}形式的数据|Array|无|
-|tokenFunc|自定义获取token的方法，应当返回一个{key:value}形式的数据|Function|无|
+
 |previewMode|是否预览模式,设为true将不能上传，只作展示使用|Boolean|false|
 |enableUpload|是否开启上传，某些条件下不允许用户再进行上传操作可设置为false|Boolean|true|
 |showFileName|显示上传的文件名|Boolean|false|
@@ -297,4 +299,5 @@ import upload from './upload'
 |onFileTypeError|当上传的文件类型不符合设定的值时调用|Function(files)|不符合条件的文件列表|
 |onFileCountError|当上传的文件超过限定的个数时调用|Function(files)|超出部分的文件列表|
 |onFileSizeError|当上传的单个文件大小超过设定的值时调用|Function(files)|超过设定大小的文件列表|
+|tokenFunc|自定义获取token的方法|Function(done:(data)=>void)|done(data:{[key:any]:any}) ;data为自定义方法返回给组件的数据|
 

@@ -16,20 +16,24 @@
         :enable-upload="!previewMode && enableUpload && !overMaxCount"
         :readonly="previewMode"
         :show-file-name="showFileName"
+        :auto-upload="autoUpload"
         @onAdd="openFileBrowser"
         @onReload="reload"
         @onRemove="handleFileRemove"
         @onItemClick="handleFileClick"
+        @onStart="startUpload"
       ></upload-card-list>
       <upload-text-list
         v-else
         :file-list="value"
         :enable-upload="!previewMode && enableUpload && !overMaxCount"
         :readonly="previewMode"
+        :auto-upload="autoUpload"
         @onAdd="openFileBrowser"
         @onReload="reload"
         @onRemove="handleFileRemove"
         @onItemClick="handleFileClick"
+        @onStart="startUpload"
       ></upload-text-list>
     </template>
 
@@ -59,6 +63,14 @@ export default {
       default() {
         return [];
       }
+    },
+    name: {
+      type: String,
+      default: "file"
+    },
+    autoUpload:{
+      type:Boolean,
+      default:true
     },
     multiple: {
       type: Boolean,
@@ -261,38 +273,45 @@ export default {
     propFix() {
       this.value.forEach((file, index) => {
         if (typeof file === "string") {
-          this.value[index] = { src: file };
+          this.value.splice(index, 1, { src: file });
           file = this.value[index];
         }
         if (file.id === undefined) {
-          file.id = this.createId();
+          this.$set(file, "id", this.createId());
         }
         if (file.name === undefined) {
-          file.name = file.src
-            .split("/")
-            .pop()
-            .trim();
+          this.$set(
+            file,
+            "name",
+            file.src
+              ? file.src
+                  .split("/")
+                  .pop()
+                  .trim()
+              : ""
+          );
         }
         if (file.ext === undefined) {
-          file.ext = this.getFileExt(file.name);
+          this.$set(file, "ext", this.getFileExt(file.name));
         }
         if (file.size === undefined) {
-          file.size = "";
+          this.$set(file, "size", "");
         }
+
         if (file.rawFile === undefined) {
-          file.rawFile = null;
+          this.$set(file, "rawFile", null);
         }
         if (file.progress === undefined) {
-          file.progress = 100;
+          this.$set(file, "progress", 100);
         }
         if (file.status === undefined) {
-          file.status = "success";
+          this.$set(file, "status", "success");
         }
-        if (file.thumbSrc === undefined) {
-          file.thumbSrc = file.src + this.thumbQuery;
+        if (file.base64 === undefined) {
+          this.$set(file, "base64", '');
         }
         if (file.type === undefined) {
-          file.type = this.getFileType(file);
+          this.$set(file, "type", this.getFileType(file));
         }
       });
     },
@@ -453,7 +472,7 @@ export default {
       if (typeof file === "object") {
         name = file.name;
       }
-      let res = name.match(/\.([\w\d]{1,4})$/i);
+      let res = name.match(/\.([\w\d]+)$/i);
       return res ? res[1].toLowerCase() : "";
     },
     getFileSize(file) {
@@ -484,6 +503,13 @@ export default {
         this.validateSize(file)
       );
     },
+    startUpload(){
+      this.value.forEach(file => {
+        if(file.status === 'waiting'){
+          this.upload(file)
+        }
+      })
+    },
     reload(file) {
       file.status = "waiting";
       file.progress = 0;
@@ -491,7 +517,7 @@ export default {
     },
     upload(file) {
       let options = {
-        file: file
+        [this.name]: file
       };
       if (this.isQiniu) {
         options.key = this.getKey(file);
@@ -541,14 +567,13 @@ export default {
           }
         });
     },
-    onStart(file) {
-      this.value.push(file);
+    imageBase64(file) {
       if (this.getFileType(file) === "image") {
         if (this.supportView) {
           let reader = new FileReader();
           reader.readAsDataURL(file.rawFile);
           reader.onload = function(e) {
-            file.thumbSrc = this.result;
+            file.base64 = this.result;
           };
         }
       }
@@ -572,7 +597,7 @@ export default {
           rawFile: rawFile,
           progress: 0,
           status: "waiting",
-          thumbSrc: ""
+          base64: ""
         };
         file.type = this.getFileType(file);
         if (this.validateFile(file)) {
@@ -583,8 +608,11 @@ export default {
               return;
             }
           }
-          this.onStart(file);
-          this.upload(file);
+          this.value.push(file);
+          this.imageBase64(file);
+          if(this.autoUpload){
+            this.upload(file);
+          }
         } else {
           if (!this.validateCount()) {
             countErrorFiles.push(file);
