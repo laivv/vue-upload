@@ -1,7 +1,11 @@
 <template>
   <div>
     <div v-if="!autoUpload" class="uk-upload-header-line">
-      <button class="uk-upload-text-btn" @click="handleStartUploadClick" :disabled="disabledStartButton">开始上传</button>
+      <button
+        class="uk-upload-text-btn"
+        @click="handleStartUploadClick"
+        :disabled="disabledStartButton"
+      >开始上传</button>
     </div>
     <div class="uk-upload-item" v-for="file in fileList" :key="file.id">
       <div class="uk-upload-item-wrap">

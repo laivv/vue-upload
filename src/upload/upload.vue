@@ -68,9 +68,9 @@ export default {
       type: String,
       default: "file"
     },
-    autoUpload:{
-      type:Boolean,
-      default:true
+    autoUpload: {
+      type: Boolean,
+      default: true
     },
     multiple: {
       type: Boolean,
@@ -308,7 +308,7 @@ export default {
           this.$set(file, "status", "success");
         }
         if (file.base64 === undefined) {
-          this.$set(file, "base64", '');
+          this.$set(file, "base64", "");
         }
         if (file.type === undefined) {
           this.$set(file, "type", this.getFileType(file));
@@ -503,12 +503,12 @@ export default {
         this.validateSize(file)
       );
     },
-    startUpload(){
+    startUpload() {
       this.value.forEach(file => {
-        if(file.status === 'waiting'){
-          this.upload(file)
+        if (file.status === "waiting") {
+          this.upload(file);
         }
-      })
+      });
     },
     reload(file) {
       file.status = "waiting";
@@ -610,7 +610,7 @@ export default {
           }
           this.value.push(file);
           this.imageBase64(file);
-          if(this.autoUpload){
+          if (this.autoUpload) {
             this.upload(file);
           }
         } else {
