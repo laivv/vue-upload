@@ -303,7 +303,7 @@ import upload from './upload'
 |token-func|自定义获取token的方法|Function(done:(data)=>void)|done(data:{[key:any]:any}) ;data为自定义方法返回给组件的数据|
 
 ### 组件方法  
-使用`vm.$refs.uploadRef.methodName()`的形式来调用
+使用`vm.$refs.uploadRef.methodName()`的形式来调用   
 |方法名|参数|说明|
 |-----|-----|------|
 |getSuccessFiles|-|获取上传成功的文件列表|
