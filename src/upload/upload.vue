@@ -13,10 +13,11 @@
       <upload-card-list
         v-if="listType === 'card'"
         :file-list="value"
-        :enable-upload="!previewMode && enableUpload && !overMaxCount"
-        :readonly="previewMode"
+        :enable-upload="!readonly && enableUpload && !overMaxCount"
+        :readonly="readonly"
         :show-file-name="showFileName"
         :auto-upload="autoUpload"
+        :thumb-query="thumbQuery"
         @onAdd="openFileBrowser"
         @onReload="reload"
         @onRemove="handleFileRemove"
@@ -26,8 +27,8 @@
       <upload-text-list
         v-else
         :file-list="value"
-        :enable-upload="!previewMode && enableUpload && !overMaxCount"
-        :readonly="previewMode"
+        :enable-upload="!readonly && enableUpload && !overMaxCount"
+        :readonly="readonly"
         :auto-upload="autoUpload"
         @onAdd="openFileBrowser"
         @onReload="reload"
@@ -98,7 +99,7 @@ export default {
       type: Function
     },
     tokenUrl: Array,
-    previewMode: {
+    readonly: {
       type: Boolean,
       default: false
     },
@@ -131,6 +132,10 @@ export default {
       type: String,
       default: "card" //card or text
     },
+    isQiniu: {
+      type: Boolean,
+      default: true
+    },
     onPreviewClose: Function,
     onPreviewSwitch: Function
   },
@@ -141,11 +146,10 @@ export default {
   },
   data() {
     return {
-      supportView: FileReader && new FileReader().readAsDataURL,
+      supportView: URL && URL.createObjectURL,
       options: {}, //token相关数据
       showPreviewDialog: false,
       index: 0,
-      isQiniu: true
     };
   },
   computed: {
@@ -157,7 +161,6 @@ export default {
     }
   },
   created() {
-    this.isQiniu = /\.qiniu\./gi.test(this.url);
     this.propFix();
     this.getUploadToken();
   },
@@ -196,7 +199,6 @@ export default {
       xhr.send(null);
     },
     getUploadToken(index, url) {
-      /* 如果传入了自定义token获取方法，直接使用自定义方法配置token和config */
       if (this.tokenFunc) {
         this.tokenFunc(data => {
           if (!data) {
@@ -213,7 +215,7 @@ export default {
         index = 0;
       }
       if (
-        this.previewMode ||
+        this.readonly ||
         !this.tokenUrl ||
         !this.tokenUrl.length ||
         index > this.tokenUrl.length - 1 ||
@@ -307,8 +309,8 @@ export default {
         if (file.status === undefined) {
           this.$set(file, "status", "success");
         }
-        if (file.base64 === undefined) {
-          this.$set(file, "base64", "");
+        if (file.blob === undefined) {
+          this.$set(file, "blob", "");
         }
         if (file.type === undefined) {
           this.$set(file, "type", this.getFileType(file));
@@ -359,7 +361,7 @@ export default {
       });
       return files;
     },
-    getFileList() {
+    getFiles() {
       return this.value.map(file => {
         return {
           name: file.name,
@@ -369,17 +371,17 @@ export default {
         };
       });
     },
-    getSuccessFileList() {
+    getSuccessFiles() {
       return this.getFileListByStatus(["success"]);
     },
-    getUploadingFileList() {
+    getUploadingFiles() {
       return this.getFileListByStatus(["pending", "waiting"]);
     },
-    getErrorFileList() {
+    getErrorFiles() {
       return this.getFileListByStatus(["error"]);
     },
-    getUploadStatus() {
-      return !this.getUploadingFileList().length;
+    isCompleted() {
+      return !this.getUploadingFiles().length;
     },
     createId: (function() {
       let id = 0;
@@ -447,9 +449,9 @@ export default {
       }
     },
     doFileRemove(file) {
-      let isComplete = this.getUploadStatus();
+      let isComplete = this.isCompleted();
       this.value.splice(this.value.indexOf(file), 1);
-      if (!isComplete && this.getUploadStatus() && this.onUploadComplete) {
+      if (!isComplete && this.isCompleted() && this.onUploadComplete) {
         this.onUploadComplete();
       }
     },
@@ -555,40 +557,36 @@ export default {
                 : response
               : src;
           file.src = src;
-          if (this.getUploadStatus() && this.onUploadComplete) {
+          if (this.isCompleted() && this.onUploadComplete) {
             this.onUploadComplete();
           }
         })
         .catch(file => {
           file.status = "error";
           this.onFileError && this.onFileError(file);
-          if (this.getUploadStatus() && this.onUploadComplete) {
+          if (this.isCompleted() && this.onUploadComplete) {
             this.onUploadComplete();
           }
         });
     },
-    imageBase64(file) {
+    createFileBlob(file) {
       if (this.getFileType(file) === "image") {
         if (this.supportView) {
-          let reader = new FileReader();
-          reader.readAsDataURL(file.rawFile);
-          reader.onload = function(e) {
-            file.base64 = this.result;
-          };
+          file.blob = URL.createObjectURL(file.rawFile)
         }
       }
     },
     onFileChange() {
-      let files = [].slice.call(this.$refs.file.files, 0);
+      const files = [].slice.call(this.$refs.file.files, 0);
       if (!files.length) {
         return;
       }
       this.$refs.file.value = "";
-      let typeErrorFiles = [],
+      const typeErrorFiles = [],
         countErrorFiles = [],
         sizeErrorFiles = [];
       files.forEach(rawFile => {
-        let file = {
+        const file = {
           id: this.createId(),
           name: rawFile.name.trim(),
           src: "",
@@ -597,7 +595,7 @@ export default {
           rawFile: rawFile,
           progress: 0,
           status: "waiting",
-          base64: ""
+          blob: ""
         };
         file.type = this.getFileType(file);
         if (this.validateFile(file)) {
@@ -609,7 +607,7 @@ export default {
             }
           }
           this.value.push(file);
-          this.imageBase64(file);
+          this.createFileBlob(file);
           if (this.autoUpload) {
             this.upload(file);
           }
@@ -638,7 +636,7 @@ export default {
     value() {
       this.propFix();
     },
-    previewMode() {
+    readonly() {
       this.getUploadToken();
     }
   }

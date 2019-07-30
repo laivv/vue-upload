@@ -18,7 +18,7 @@
           <div class="uk-upload-full uk-upload-img-wrap" @click="handleFileClick(file)">
             <template v-if="file.type==='image'">
               <img
-                :src="file.base64 || file.src + file.thumbQuery"
+                :src="file.blob || file.src + thumbQuery"
                 v-if="supportView || file.status==='success'"
                 class="uk-upload-img"
               >
@@ -88,6 +88,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    },
+     thumbQuery: {
+      type: String,
+      default: ""
     }
   },
   data() {

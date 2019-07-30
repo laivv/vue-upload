@@ -69,23 +69,23 @@
 						return true;
 					},
 					getStatus: function() {
-						var status = this.$refs.upload.getUploadStatus();
-						console.log(status);
+						var isCompleted = this.$refs.upload.isCompleted();
+						console.log(isCompleted);
 					},
 					getFileList: function() {
-						var files = this.$refs.upload.getFileList();
+						var files = this.$refs.upload.getFiles();
 						console.log(files);
 					},
 					getSuccessList: function() {
-						var files = this.$refs.upload.getSuccessFileList();
+						var files = this.$refs.upload.getSuccessFiles();
 						console.log(files);
 					},
 					getErrorList: function() {
-						var files = this.$refs.upload.getErrorFileList();
+						var files = this.$refs.upload.getErrorFiles();
 						console.log(files);
 					},
 					getUploadingList: function() {
-						var files = this.$refs.upload.getUploadingFileList();
+						var files = this.$refs.upload.getUploadingFiles();
 						console.log(files);
 					},
 					switchListType: function() {

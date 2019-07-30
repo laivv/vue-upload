@@ -8,11 +8,10 @@
       :auto-upload="autoUpload"
       :enable-upload="true"
       :max-file-count="50"
-
       :show-file-name="true"
       :preview-mode="false"
       :show-file-list="true"
-      :max-file-size="0.1"
+      :max-file-size="10"
       :accept-list="['png']"
       :on-file-type-error="onFileTypeError"
       :on-file-count-error="onFileCountError"
@@ -43,7 +42,7 @@ export default {
         "http://www.w3school.com.cn/i/movie.ogg",
         "http://www.w3school.com.cn/example/html5/mov_bbb.mp4",
         "http://yun.it7090.com/video/XHLaunchAd/video03.mp4",
-        "http://yun.it7090.com/video/XHLaunchAd/video01.mp4",
+        "https://www.baidu.com/img/bd_logo1.png",
         "不支持的文件测试-unknow"
       ],
       autoUpload:true,
@@ -65,23 +64,23 @@ export default {
       return true;
     },
     getStatus: function() {
-      var status = this.$refs.upload.getUploadStatus();
-      console.log(status);
+      var isCompleted = this.$refs.upload.isCompleted();
+      console.log(isCompleted);
     },
     getFileList: function() {
-      var files = this.$refs.upload.getFileList();
+      var files = this.$refs.upload.getFiles();
       console.log(files);
     },
     getSuccessList: function() {
-      var files = this.$refs.upload.getSuccessFileList();
+      var files = this.$refs.upload.getSuccessFiles();
       console.log(files);
     },
     getErrorList: function() {
-      var files = this.$refs.upload.getErrorFileList();
+      var files = this.$refs.upload.getErrorFiles();
       console.log(files);
     },
     getUploadingList: function() {
-      var files = this.$refs.upload.getUploadingFileList();
+      var files = this.$refs.upload.getUploadingFiles();
       console.log(files);
     },
     switchListType: function() {

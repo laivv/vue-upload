@@ -61,13 +61,14 @@
       </span>
     </template>
     <div class="uk-previewer-close-btn" @click="closePreviewer">×</div>
-    <div class="uk-previewer-prev-btn" @click="prevFile">&lt;</div>
-    <div class="uk-previewer-next-btn" @click="nextFile">&gt;</div>
+    <!-- <div class="uk-previewer-prev-btn" @click="prevFile">&lt;</div>
+    <div class="uk-previewer-next-btn" @click="nextFile">&gt;</div> -->
     <div class="uk-previewer-footer">
       <div v-if="showFileName" class="uk-previewer-file-name">{{ file.name }}</div>
       <div class="uk-previewer-toolbar uk-previewer-clearfix">
         <span class="uk-previewer-left uk-previewer-index">{{ computedIndex }}/{{ computedCount }}</span>
         <button
+          type="button"
           class="uk-previewer-mini-hide"
           @click="rotate(90)"
           title="旋转"
@@ -76,6 +77,7 @@
           <i class="iconfont1 icon-xuanzhuan"></i>
         </button>
         <button
+          type="button"
           class="uk-previewer-mini-hide"
           @click="setLocationCenter"
           title="居中"
@@ -84,26 +86,31 @@
           <i class="iconfont1 icon-juzhong"></i>
         </button>
         <button
+          type="button"
           @click="scale(1,true)"
           title="原始大小"
           :disabled="fileType !== 'image' || !fileList.length"
         >
           <i class="iconfont1 icon-yuanshidaxiao"></i>
         </button>
-        <button @click="scale(0.2)" title="放大" :disabled="fileType !== 'image' || !fileList.length">
+        <button
+          type="button" @click="scale(0.2)" title="放大" :disabled="fileType !== 'image' || !fileList.length">
           <i class="iconfont1 icon-fangda"></i>
         </button>
         <button
+          type="button"
           @click="scale(-0.2)"
           title="缩小"
           :disabled="fileType !== 'image' || !fileList.length"
         >
           <i class="iconfont1 icon-suoxiao"></i>
         </button>
-        <button @click="prevFile" title="上一个" :disabled="!curIndex || !fileList.length">
+        <button
+          type="button" @click="prevFile" title="上一个" :disabled="!curIndex || !fileList.length">
           <i class="iconfont1 icon-jiantou"></i>
         </button>
         <button
+          type="button"
           @click="nextFile"
           title="下一个"
           :disabled="curIndex >= fileList.length - 1 || !fileList.length"
