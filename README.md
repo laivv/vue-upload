@@ -1,14 +1,16 @@
 # vue-upload
-轻量级的vue上传组件，支持查看大图、播放音频和视频  
-## install
+轻量级的vue上传组件，已上传文件列表中的图片支持预览大图、音视频支持播放
+## 安装 
+本组件没有发布到npm，所以需要手动克隆或下载
 ```sh
 git clone https://github.com/laivv/vue-upload.git
 ```
-## usage
+## 引入
 ```js
 import upload from './upload'
 ```
 ### 使用组件
+
 ```html
 <upload v-model="fileList"></upload>
 
@@ -24,7 +26,8 @@ import upload from './upload'
 ```
 
 
-### 给组件绑定初始列表
+### 给组件绑定初始列表 
+fileList的格式需要按照下面一样，其中 列表项中的`type`字段的类型只能是这些：`image`、 `video`、 `audio`、 `text`、 `rar` 、`file`，用于在列表中显示文件类型图标
 ```html
 <upload v-model="fileList"></upload>
 
@@ -70,7 +73,6 @@ import upload from './upload'
 ```
 
 
-
 ### 获取上传状态
 
 ```html
@@ -113,15 +115,9 @@ import upload from './upload'
     },
     methods:{
      submit(){
-        //获取上传是否完毕，无论上传成功还是失败
-         const isCompleted = this.$refs.upload.getUploadStatus() //true上传完毕 ;false未上传完毕
-         if(!isCompleted){
-            alert("还有文件正在上传，不能提交")
-          }else{
-              //获取上传成功的文件列表
-              const successFiles = this.$refs.upload.getSuccessFiles()
-              //提交数据 do ajax
-          }
+        //获取上传成功的文件列表
+          const successFiles = this.$refs.upload.getSuccessFiles()
+        //提交数据 do ajax...
       }
     }
   }
@@ -266,7 +262,7 @@ import upload from './upload'
 
 ### 属性
 |属性名|说明|类型|默认值|
-|-------|----------------|-----|------|
+|----------|----------------|-----|------|
 |url|上传的url地址|String|http://up.qiniu.com|
 |v-model|绑定的数据|Array|[]|
 |name|上传的参数名|String|`file`|
@@ -288,7 +284,7 @@ import upload from './upload'
 
 ### 回调钩子
 |属性名|说明|回调参数|回调参数说明|
-|-------|--------------------|-----|-------------|
+|------------|--------------------|-----|-------------|
 |before-file-add|当某个文件在添加到上传列表之前调用，通过返回true或false来决定该文件是否被添加|Function(file)|即将被添加的文件|
 |on-file-success|当某个文件上传成功时调用|Function(file,response,param?)|file:上传成功的那个文件,response:上传成功服务器返回的数据,param:如果有获取token相关数据，param则是包含了token相关的数据|
 |on-file-error|当某个文件上传失败时调用|Function(file)|某个上传失败的文件|
@@ -302,7 +298,7 @@ import upload from './upload'
 |on-file-size-error|当上传的单个文件大小超过设定的值时调用|Function(files)|超过设定大小的文件列表|
 |token-func|自定义获取token的方法|Function(done:(data)=>void)|done(data:{[key:any]:any}) ;data为自定义方法返回给组件的数据|
 
-### 组件方法  
+### 组件实例方法  
 使用`vm.$refs.uploadRef.methodName()`的形式来调用   
 |方法名|参数|说明|
 |-----|-----|------|
