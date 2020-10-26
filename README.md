@@ -70,7 +70,7 @@ import upload from './upload'
 
 
 ### 自定义上传行为（会覆盖组件自身的上传）
-当`data`属性携带额外数据不能满足需求，或都是需要自定义上传时，可以传入`custom-request`来自定义上传行为
+当`data`属性携带额外数据不能满足需求，或者是需要自定义上传时，可以传入`custom-request`来自定义上传行为
 
 ```html
 <upload 
