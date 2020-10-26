@@ -2,6 +2,7 @@
   <div id="app" class="app">
     <upload
       ref="upload"
+      url="http://tool.chinaz.com/tools/imgtobase"
       v-model="fileList"
       :list-type="listType"
       :multiple="true"
@@ -19,7 +20,10 @@
       :before-file-add="beforeFileAdd"
       :on-file-remove="onFileRemove"
       :on-file-click="onFileClick"
+      :data="{token:'aaa'}"
       thumb-query="?imgview/w/100/height/50"
+      :custom-request="customRequest"
+      :on-file-success="onFileSuccess"
     ></upload>
     <button @click="getStatus">获取上传状态</button>
     <button @click="getFileList">获取所有文件</button>
@@ -97,6 +101,13 @@ export default {
     onFileCountError: function(files) {
       alert("最多上传5个文件");
       console.log(files);
+    },
+    customRequest(file){
+      console.log('customRequest:' , file)
+      return Promise.resolve({url: 'https://www.baidu.com/img/bd_logo1.png'})
+    },
+    onFileSuccess(response){
+      return response.url
     }
   }
 };

@@ -382,11 +382,16 @@ export default {
       const form = { [this.name]: file };
 
       if(this.customRequest){
-        try{
-          const response = await this.customRequest(file)
-          this.processFileSuccess(response, file);
-        } catch(e){
-          this.processFileError(file)
+        const promise = this.customRequest(file)
+        if(promise instanceof Promise){
+           try{
+              const response = await promise
+              this.processFileSuccess(response, file);
+            } catch(e){
+              this.processFileError(file)
+            }
+        }else {
+           this.processFileError(file)
         }
         return
       }
@@ -466,7 +471,7 @@ export default {
           blob: ""
         };
         file.type = this.getFileType(file)
-        
+
         if (this.validateFile(file)) {
           if (this.beforeFileAdd) {
             let next = this.beforeFileAdd(file);
