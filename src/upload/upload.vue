@@ -463,10 +463,10 @@ export default {
           rawFile: rawFile,
           progress: 0,
           status: "waiting",
-          blob: "",
-          type : this.getFileType(file)
+          blob: ""
         };
-
+        file.type = this.getFileType(file)
+        
         if (this.validateFile(file)) {
           if (this.beforeFileAdd) {
             let next = this.beforeFileAdd(file);
