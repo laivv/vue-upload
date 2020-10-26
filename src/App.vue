@@ -12,7 +12,7 @@
       :preview-mode="false"
       :show-file-list="true"
       :max-file-size="10"
-      :accept-list="['png']"
+      :accepts="['png']"
       :on-file-type-error="onFileTypeError"
       :on-file-count-error="onFileCountError"
       :on-file-size-error="onFileSizeError"
@@ -85,9 +85,6 @@ export default {
     },
     switchListType: function() {
       this.listType = this.listType == "card" ? "text" : "card";
-    },
-    getOringinalList: function() {
-      console.log(this.fileList);
     },
     onFileTypeError: function(files) {
       alert("文件类型不正确");

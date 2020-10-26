@@ -55,10 +55,7 @@ import Previewer from "../previewer/index.js";
 import Uploader from "./uploader.js";
 export default {
   props: {
-    url: {
-      type: String,
-      default: "http://up.qiniu.com"
-    },
+    url: String,
     value: {
       type: Array,
       default() {
@@ -67,7 +64,7 @@ export default {
     },
     name: {
       type: String,
-      default: "file"
+      default: 'file'
     },
     autoUpload: {
       type: Boolean,
@@ -85,7 +82,7 @@ export default {
       type: Number,
       default: 0
     },
-    acceptList: {
+    accepts: {
       type: Array,
       default() {
         return [];
@@ -95,10 +92,8 @@ export default {
       type: String,
       default: ""
     },
-    tokenFunc: {
-      type: Function
-    },
-    tokenUrl: Array,
+    data: Object,
+    customRequest: Function,
     readonly: {
       type: Boolean,
       default: false
@@ -132,10 +127,6 @@ export default {
       type: String,
       default: "card" //card or text
     },
-    isQiniu: {
-      type: Boolean,
-      default: true
-    },
     onPreviewClose: Function,
     onPreviewSwitch: Function
   },
@@ -147,7 +138,6 @@ export default {
   data() {
     return {
       supportView: URL && URL.createObjectURL,
-      options: {}, //token相关数据
       showPreviewDialog: false,
       index: 0,
     };
@@ -162,116 +152,9 @@ export default {
   },
   created() {
     this.propFix();
-    this.getUploadToken();
   },
   methods: {
-    request(options) {
-      let params = options.data,
-        url = options.url;
-      if (params && typeof params === "object") {
-        for (let key in params) {
-          if (params.hasOwnProperty[key]) {
-            url +=
-              (url.indexOf("?") > -1 ? "&" : "?") + key + "=" + params[key];
-          }
-        }
-      }
-      let xhr = new XMLHttpRequest();
-      xhr.open("GET", url, true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-          let data = xhr.responseText;
-          let success = true;
-          try {
-            data = JSON.parse(xhr.responseText);
-          } catch (e) {
-            success = false;
-          }
-          if (success && (xhr.status === 200 || xhr.status === 304)) {
-            options.success && options.success(data);
-            options.complete && options.complete(true, data);
-          } else {
-            options.error && options.error(data);
-            options.complete && options.complete(false, data);
-          }
-        }
-      };
-      xhr.send(null);
-    },
-    getUploadToken(index, url) {
-      if (this.tokenFunc) {
-        this.tokenFunc(data => {
-          if (!data) {
-            return;
-          }
-          Object.keys(data).forEach(key => {
-            this.$set(this.options, key, data[key]);
-          });
-        });
-        return;
-      }
-      let _self = this;
-      if (index === undefined) {
-        index = 0;
-      }
-      if (
-        this.readonly ||
-        !this.tokenUrl ||
-        !this.tokenUrl.length ||
-        index > this.tokenUrl.length - 1 ||
-        !this.tokenUrl[index]
-      ) {
-        return;
-      }
-      _self.request({
-        url: url || this.tokenUrl[index],
-        complete(success, res) {
-          let url = _self.tokenUrl[index + 1];
-          if (success) {
-            for (let key in res) {
-              if (res.hasOwnProperty(key)) {
-                if (_self.isQiniu) {
-                  if (new RegExp("token", "i").test(key)) {
-                    _self.$set(_self.options, "token", res[key]);
-                  }
-                  if (key.toLowerCase() === "domain") {
-                    _self.$set(_self.options, "domain", res[key]);
-                  }
-                  if (key.toLowerCase() === "prefix") {
-                    _self.$set(_self.options, "prefix", res[key]);
-                  }
-                } else {
-                  _self.$set(_self.options, key, res[key]);
-                }
 
-                if (url) {
-                  let exp = new RegExp("{s*" + key + "s*}", "ig");
-                  url = url.replace(exp, res[key]);
-                }
-              }
-            }
-          }
-          if ((_self.isQiniu && !_self.options.token) || !success) {
-            index = index + 1;
-            if (index > _self.tokenUrl.length - 1) {
-              console.error("获取上传token失败！");
-            } else {
-              _self.getUploadToken(index, url);
-            }
-          }
-        }
-      });
-    },
-    getKey(file) {
-      let _self = this;
-      let ext = file.ext ? "." + file.ext : "";
-      let key =
-        (_self.options.prefix ? _self.options.prefix : "A") +
-        "." +
-        _self.createGuid(8, 16) +
-        ext;
-      return key;
-    },
     propFix() {
       this.value.forEach((file, index) => {
         if (typeof file === "string") {
@@ -389,28 +272,6 @@ export default {
         return `${Date.now()}${++id}`;
       };
     })(),
-    createGuid(len, radix) {
-      let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
-        ""
-      );
-      let uuid = [],
-        i;
-      radix = radix || chars.length;
-      if (len) {
-        for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)];
-      } else {
-        let r;
-        uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
-        uuid[14] = "4";
-        for (i = 0; i < 36; i++) {
-          if (!uuid[i]) {
-            r = 0 | (Math.random() * 16);
-            uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r];
-          }
-        }
-      }
-      return uuid.join("");
-    },
     handlePreviewerClose() {
       this.onPreviewClose && this.onPreviewClose();
     },
@@ -481,7 +342,7 @@ export default {
       return file.size / 1024 / 1024;
     },
     validateType(file) {
-      if (this.acceptList.length && this.acceptList.indexOf(file.ext) === -1) {
+      if (this.accepts.length && this.accepts.indexOf(file.ext) === -1) {
         return false;
       }
       return true;
@@ -517,57 +378,63 @@ export default {
       file.progress = 0;
       this.upload(file);
     },
-    upload(file) {
-      let options = {
-        [this.name]: file
-      };
-      if (this.isQiniu) {
-        options.key = this.getKey(file);
-        options.token = this.options.token;
-      } else {
-        for (let key in this.options) {
-          if (this.options.hasOwnProperty(key)) {
-            options[key] = this.options[key];
+    async upload(file) {
+      const form = { [this.name]: file };
+
+      if(this.customRequest){
+        try{
+          const response = await this.customRequest(file)
+          this.processFileSuccess(response, file);
+        } catch(e){
+          this.processFileError(file)
+        }
+        return
+      }
+
+      if(this.data){
+        for (let key in this.data) {
+          if (this.data.hasOwnProperty(key)) {
+            form[key] = this.data[key];
           }
         }
       }
+      
       new Uploader(this.url)
-        .upload(options)
-        .setDataType("json")
-        .start(file => {
-          file.status = "pending";
-        })
-        .progress((file, percent) => {
-          file.progress = percent;
-        })
-        .then((response, file) => {
-          file.status = "success";
-          file.progress = 100;
-          let src = undefined;
-          if (this.onFileSuccess) {
-            let param = Object.keys(this.options).length
-              ? this.options
-              : undefined;
-            src = this.onFileSuccess(file, response, param);
-          }
-          src =
-            src === undefined
-              ? this.isQiniu
-                ? this.options.domain + response.key
-                : response
-              : src;
-          file.src = src;
-          if (this.isCompleted() && this.onUploadComplete) {
-            this.onUploadComplete();
-          }
-        })
-        .catch(file => {
-          file.status = "error";
-          this.onFileError && this.onFileError(file);
-          if (this.isCompleted() && this.onUploadComplete) {
-            this.onUploadComplete();
-          }
-        });
+      .upload(form)
+      .setDataType("json")
+      .start(file => {
+        file.status = "pending";
+      })
+      .progress((file, percent) => {
+        file.progress = percent;
+      })
+      .then((response, file) => {
+        this.processFileSuccess(response, file);
+      })
+      .catch(file => {
+        this.processFileError(file);
+      });
+    },
+    processFileError(file){
+      file.status = "error";
+      this.onFileError && this.onFileError(file);
+      if (this.isCompleted() && this.onUploadComplete) {
+        this.onUploadComplete();
+      }
+    },
+    processFileSuccess(response, file) {
+      file.status  = "success";
+      file.progress = 100;
+      let src = undefined;
+      if (this.onFileSuccess) {
+         src = this.onFileSuccess(response, file);
+       }
+      if(src){
+        file.src = src
+      }
+      if (this.isCompleted() && this.onUploadComplete) {
+        this.onUploadComplete();
+      }
     },
     createFileBlob(file) {
       if (this.getFileType(file) === "image") {
@@ -582,9 +449,10 @@ export default {
         return;
       }
       this.$refs.file.value = "";
-      const typeErrorFiles = [],
-        countErrorFiles = [],
-        sizeErrorFiles = [];
+      const typeErrorFiles = [];
+      const countErrorFiles = [];
+      const sizeErrorFiles = [];
+
       files.forEach(rawFile => {
         const file = {
           id: this.createId(),
@@ -595,9 +463,10 @@ export default {
           rawFile: rawFile,
           progress: 0,
           status: "waiting",
-          blob: ""
+          blob: "",
+          type : this.getFileType(file)
         };
-        file.type = this.getFileType(file);
+
         if (this.validateFile(file)) {
           if (this.beforeFileAdd) {
             let next = this.beforeFileAdd(file);
@@ -635,9 +504,6 @@ export default {
   watch: {
     value() {
       this.propFix();
-    },
-    readonly() {
-      this.getUploadToken();
     }
   }
 };
