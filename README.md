@@ -28,7 +28,7 @@ import upload from './upload'
     },
     onFileSuccess(response, file){
       // 返回文件的url地址
-      return resopnse.data.fileUrl 
+      return response.data.fileUrl 
     }
   }
 </script>  
@@ -61,7 +61,7 @@ import upload from './upload'
     },
     onFileSuccess(response, file){
       // 返回文件的url地址
-      return resopnse.data.fileUrl 
+      return response.data.fileUrl 
     }
   }
 </script>  
@@ -101,7 +101,7 @@ import upload from './upload'
       })
     }
     onFileSuccess(response, file){
-      return resopnse.data.fileUrl
+      return response.data.fileUrl
     }
   }
 </script>  
@@ -156,7 +156,7 @@ fileList的格式需要按照下面一样，其中 列表项中的`type`字段�
       }
     },
      onFileSuccess(response, file){
-      return resopnse.data.fileUrl 
+      return response.data.fileUrl 
     }
   }
 
@@ -190,7 +190,7 @@ fileList的格式需要按照下面一样，其中 列表项中的`type`字段�
           }
       },
       onFileSuccess(response, file){
-        return resopnse.data.fileUrl 
+        return response.data.fileUrl 
       }
   
     }
@@ -224,7 +224,7 @@ fileList的格式需要按照下面一样，其中 列表项中的`type`字段�
         //提交数据 do ajax...
       },
       onFileSuccess(response, file){
-        return resopnse.data.fileUrl 
+        return response.data.fileUrl 
       }
     }
   }
@@ -265,7 +265,7 @@ fileList的格式需要按照下面一样，其中 列表项中的`type`字段�
       },
       ,
       onFileSuccess(response, file){
-        return resopnse.data.fileUrl 
+        return response.data.fileUrl 
       }
     }
   }
